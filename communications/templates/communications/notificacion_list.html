@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">{{ page_title }}</h1>
+            <a href="{% url 'communications:marcar-todas-como-leidas' %}" class="btn btn-sm btn-outline-secondary">Marcar
+                todas como leídas</a>
+        </div>
+
+        <div class="list-group">
+            {% for notificacion in notificaciones %}
+                <a href="{% url 'communications:marcar-como-leida' pk=notificacion.pk %}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-start {% if not notificacion.leida %}list-group-item-light fw-bold{% endif %}">
+
+                    <div class="ms-2 me-auto">
+                        <div class="fw-normal">
+                            {% if notificacion.actor %}
+                                <strong>{{ notificacion.actor.username }}</strong>
+                            {% else %}
+                                El sistema
+                            {% endif %}
+                            {{ notificacion.verbo }}
+                        </div>
+                        <small class="text-muted">{{ notificacion.timestamp|timesince }} atrás</small>
+                    </div>
+
+                    {% if not notificacion.leida %}
+                        <span class="badge bg-primary rounded-pill" title="No leída">•</span>
+                    {% endif %}
+                </a>
+            {% empty %}
+                <div class="list-group-item">
+                    <p class="text-center text-muted mb-0">No tienes notificaciones.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

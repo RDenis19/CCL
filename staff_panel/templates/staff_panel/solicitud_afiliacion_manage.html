@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header"><h5 class="mb-0">Detalles del Solicitante</h5></div>
+                    <div class="card-body">
+                        {% with detalle_natural=solicitud.detallesolicitudnatural detalle_juridica=solicitud.detallesolicitudjuridica %}
+                            {% if detalle_natural %}
+                                <p><strong>Tipo:</strong> Persona Natural</p>
+                                <p>
+                                    <strong>Nombre:</strong> {{ detalle_natural.nombres }} {{ detalle_natural.apellidos }}
+                                </p>
+                                <p><strong>Cédula:</strong> {{ detalle_natural.cedula }}</p>
+                                <p><strong>Celular:</strong> {{ detalle_natural.celular }}</p>
+                                <p><strong>Dirección:</strong> {{ detalle_natural.direccion }}</p>
+                            {% elif detalle_juridica %}
+                                <p><strong>Tipo:</strong> Persona Jurídica</p>
+                                <p><strong>Razón Social:</strong> {{ detalle_juridica.razon_social }}</p>
+                                <p><strong>RUC:</strong> {{ detalle_juridica.ruc }}</p>
+                                <p><strong>Nombre Comercial:</strong> {{ detalle_juridica.nombre_comercial }}</p>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header"><h5 class="mb-0">Acciones</h5></div>
+                    <div class="card-body">
+                        <p><strong>Estado Actual:</strong> {{ solicitud.get_estado_display }}</p>
+                        {% if solicitud.estado == 'PENDIENTE' %}
+                            <p class="text-muted">Revisa la información y aprueba o rechaza la solicitud.</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="d-grid gap-2">
+                                    <button type="submit" name="action" value="aprobar" class="btn btn-success">Aprobar
+                                        Solicitud
+                                    </button>
+                                    <button type="submit" name="action" value="rechazar" class="btn btn-danger">Rechazar
+                                        Solicitud
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <p class="text-muted">Esta solicitud ya ha sido procesada.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}" class="btn btn-outline-secondary mt-4">‹ Volver a la
+            lista</a>
+    </div>
+{% endblock content %}

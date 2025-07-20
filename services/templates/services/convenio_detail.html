@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="pb-3 mb-4 border-bottom">
+            <h1 class="display-6">{{ convenio.nombre_entidad }}</h1>
+            {% if convenio.contacto %}
+                <p class="lead text-muted">Contacto: {{ convenio.contacto }}</p>
+            {% endif %}
+        </div>
+
+        <h3 class="mb-3">Beneficios Ofrecidos</h3>
+
+        {% for beneficio in convenio.beneficios.all %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ beneficio.categoria.nombre }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text fs-5">{{ beneficio.descripcion }}</p>
+
+                    {% if beneficio.detalles.all %}
+                        <ul class="list-group list-group-flush">
+                            {% for detalle in beneficio.detalles.all %}
+                                <li class="list-group-item">{{ detalle.descripcion_descuento }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-warning">
+                No se han detallado los beneficios para este convenio.
+            </div>
+        {% endfor %}
+
+        <div class="mt-4">
+            <a href="{% url 'services:convenio-list' %}" class="btn btn-outline-secondary">‹ Volver a todos los
+                Convenios</a>
+        </div>
+    </div>
+{% endblock content %}

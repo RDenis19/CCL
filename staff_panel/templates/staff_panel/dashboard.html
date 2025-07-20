@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Solicitudes de Afiliación</h5>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="display-1 fw-bold">{{ pendientes_afiliacion }}</h1>
+                        <p class="card-text">Solicitudes pendientes de revisión.</p>
+                        <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}?estado=PENDIENTE"
+                           class="btn btn-primary">Gestionar Solicitudes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Solicitudes de Servicios</h5>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="display-1 fw-bold">{{ pendientes_servicios }}</h1>
+                        <p class="card-text">Solicitudes de servicios y reservas por aprobar.</p>
+                        <a href="{% url 'staff_panel:solicitud-servicio-list' %}" class="btn btn-primary">Gestionar Solicitudes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header"><h5 class="mb-0">Detalles de la Solicitud</h5></div>
+                    <div class="card-body">
+                        <p><strong>Socio:</strong> {{ solicitud.solicitante.get_full_name }}
+                            ({{ solicitud.solicitante.username }})</p>
+                        <p><strong>Recurso:</strong> {{ solicitud.recurso.nombre }}</p>
+                        {% if solicitud.horario %}
+                            <p><strong>Horario
+                                Reservado:</strong> {{ solicitud.horario.fecha_hora_inicio|date:"d M, Y, H:i" }}
+                                - {{ solicitud.horario.fecha_hora_fin|time:"H:i" }}</p>
+                        {% endif %}
+                        <p><strong>Notas del socio:</strong></p>
+                        <p class="p-3 bg-light rounded"><em>{{ solicitud.notas_usuario|default:"Sin notas." }}</em></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header"><h5 class="mb-0">Acciones</h5></div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">{{ form.respuesta }}</div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" name="action" value="aprobar" class="btn btn-success">Aprobar
+                                </button>
+                                <button type="submit" name="action" value="rechazar" class="btn btn-danger">Rechazar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
