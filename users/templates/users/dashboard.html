@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="pb-3 mb-4 border-bottom">
+            <h1 class="display-6">Bienvenido, {{ user.get_full_name|default:user.username }}!</h1>
+            <p class="lead text-muted">Este es tu panel de control. Aquí puedes ver un resumen de tu actividad
+                reciente.</p>
+        </div>
+
+        {% if not user.membresia and not solicitud_pendiente %}
+            <div class="alert alert-primary text-center shadow-sm" role="alert">
+                <h4 class="alert-heading">¡Únete a Nuestra Comunidad!</h4>
+                <p>Aún no eres socio. Inicia tu proceso de afiliación para acceder a todos nuestros beneficios y
+                    servicios exclusivos.</p>
+                <hr>
+                <a href="{% url 'memberships:solicitud-selector' %}" class="btn btn-primary fw-bold">¡Quiero ser
+                    Socio!</a>
+            </div>
+        {% endif %}
+
+        {# Alerta para solicitudes de afiliación pendientes #}
+        {% if solicitud_pendiente and solicitud_pendiente.estado != 'APROBADA' %}
+            <div class="alert alert-info shadow-sm" role="alert">
+                <h4 class="alert-heading">¡Tu solicitud de afiliación está en proceso!</h4>
+                <p>Puedes revisar el estado de tu solicitud en cualquier momento. El estado actual es:
+                    <strong>{{ solicitud_pendiente.get_estado_display }}</strong>.</p>
+                <hr>
+                <a href="{% url 'memberships:solicitud-detail' %}" class="btn btn-info-subtle mb-0">Ver detalle de mi
+                    solicitud</a>
+            </div>
+        {% endif %}
+
+        {# [NUEVO] Tarjeta destacada con el estado de la membresía #}
+        {% if user.membresia %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Estado de tu Membresía</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <strong>Número de Socio:</strong>
+                            <p class="fs-5 fw-bold text-primary mb-0">{{ user.membresia.numero_socio }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Miembro desde:</strong>
+                            <p class="fs-5 mb-0">{{ user.membresia.fecha_ingreso|date:"d M, Y" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Estado actual:</strong>
+                            <p class="fs-5 mb-0">
+                                <span class="badge bg-success">{{ user.membresia.get_estado_display }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Próximas Reservas</h5>
+                        <a href="{% url 'services:mis-solicitudes' %}" class="btn btn-sm btn-outline-secondary">Ver
+                            todas</a>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for reserva in proximas_reservas %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ reserva.recurso.nombre }}</h6>
+                                    <small class="text-muted">{{ reserva.horario.fecha_hora_inicio|date:"d M, Y" }}</small>
+                                </div>
+                                <p class="mb-1">De {{ reserva.horario.fecha_hora_inicio|time:"H:i" }}
+                                    a {{ reserva.horario.fecha_hora_fin|time:"H:i" }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <p class="text-muted mb-0">No tienes próximas reservas confirmadas.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Notificaciones Recientes no Leídas</h5>
+                        <a href="{% url 'communications:notificacion-list' %}" class="btn btn-sm btn-outline-secondary">Ver
+                            todas</a>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for notificacion in notificaciones_no_leidas %}
+                            <a href="{% url 'communications:marcar-como-leida' pk=notificacion.pk %}"
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <p class="mb-1">{{ notificacion.verbo }}</p>
+                                    <small>{{ notificacion.timestamp|timesince }} atrás</small>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class="list-group-item">
+                                <p class="text-muted mb-0">No tienes notificaciones nuevas.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Accesos Directos</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'users:perfil-detail' %}" class="list-group-item list-group-item-action">Mi
+                            Perfil</a>
+                        <a href="{% url 'services:mis-solicitudes' %}" class="list-group-item list-group-item-action">Mi
+                            Historial de Solicitudes</a> {# [NUEVO] #}
+                        <a href="{% url 'services:servicio-list' %}" class="list-group-item list-group-item-action">Catálogo
+                            de Servicios</a>
+                        <a href="{% url 'services:convenio-list' %}" class="list-group-item list-group-item-action">Convenios
+                            y Beneficios</a>
+                        <a href="{% url 'content:noticia-list' %}" class="list-group-item list-group-item-action">Noticias
+                            y Novedades</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

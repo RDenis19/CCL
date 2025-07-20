@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+
+                <article>
+                    <header class="mb-4">
+                        <h1 class="fw-bolder mb-1">{{ noticia.titulo }}</h1>
+                        <div class="text-muted fst-italic mb-2">
+                            Publicado el {{ noticia.fecha_publicacion|date:"d \d\e F, Y" }}
+                            por {{ noticia.autor.get_full_name|default:noticia.autor.username }}
+                        </div>
+                        <span class="badge bg-primary">{{ noticia.categoria.nombre }}</span>
+                    </header>
+                    <section class="mb-5">
+                        {{ noticia.contenido|linebreaks }}
+                    </section>
+                </article>
+
+                <hr class="my-5">
+
+                <section>
+                    <div class="card bg-light shadow-sm">
+                        <div class="card-body">
+                            <h5 class="mb-3">Deja tu comentario</h5>
+                            {% if user.is_authenticated %}
+                                <form method="post" novalidate>
+                                    {% csrf_token %}
+                                    {{ form_comentario.contenido }}
+                                    <button class="btn btn-primary mt-2" type="submit">Publicar Comentario</button>
+                                </form>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    Debes <a href="{% url 'users:login' %}?next={{ request.path }}">iniciar sesión</a>
+                                    para poder comentar.
+                                </div>
+                            {% endif %}
+
+                            <div class="my-4 border-top"></div>
+
+                            {% for comentario in comentarios %}
+                                <div class="d-flex mb-4">
+                                    <div class="flex-shrink-0">
+                                        <img class="rounded-circle"
+                                             src="{{ comentario.autor.perfil.avatar.url|default:'/static/img/default-avatar.png' }}"
+                                             alt="Avatar" width="50"/>
+                                    </div>
+                                    <div class="ms-3">
+                                        <div class="fw-bold">{{ comentario.autor.get_full_name|default:comentario.autor.username }}</div>
+                                        <div class="text-muted small">{{ comentario.fecha_creacion|timesince }} atrás
+                                        </div>
+                                        {{ comentario.contenido|linebreaksbr }}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-center text-muted">Aún no hay comentarios. ¡Sé el primero en
+                                    comentar!</p>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
