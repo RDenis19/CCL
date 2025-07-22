@@ -1,11 +1,8 @@
-# Archivo: memberships/signals.py
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.contenttypes.models import ContentType
 
 from communications.models import Notificacion
-from .models import SolicitudAfiliacion
+from memberships.models import SolicitudAfiliacion
 
 
 @receiver(post_save, sender=SolicitudAfiliacion)

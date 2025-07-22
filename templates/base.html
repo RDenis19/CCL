@@ -18,7 +18,7 @@
     <div class="container">
         <a class="navbar-brand"
            href="
-                   {% if user.is_authenticated %}{% url 'users:dashboard' %}{% else %}{% url 'home' %}{% endif %}">Camara
+                   {% if user.is_authenticated %}{% url 'users:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">Camara
             de Comercio de Loja</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar"
                 aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
