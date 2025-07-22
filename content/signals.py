@@ -16,7 +16,7 @@ def notificar_nuevo_comentario(sender, instance, created, **kwargs):
 
         # Evitar que el autor se notifique a sí mismo
         if noticia.autor != comentario.autor:
-            verbo = f"ha comentado en tu noticia: '{noticia.titulo}'"
+            verbo = f"Han comentado en tu noticia: '{noticia.titulo}'"
 
             Notificacion.objects.create(
                 destinatario=noticia.autor,

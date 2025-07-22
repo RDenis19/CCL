@@ -1,13 +1,10 @@
-# Archivo: content/views.py
-
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .models import Noticia
 from .forms import ComentarioNoticiaForm
+from .models import Noticia
 
 
 def noticia_list_view(request):
@@ -37,7 +34,6 @@ def noticia_detail_view(request, slug):
     )
     comentarios = noticia.comentarios.filter(aprobado=True).select_related('autor__perfil')
 
-    # Lógica del formulario de comentarios
     form = ComentarioNoticiaForm()
     if request.method == 'POST' and request.user.is_authenticated:
         form = ComentarioNoticiaForm(request.POST)
@@ -48,6 +44,7 @@ def noticia_detail_view(request, slug):
             nuevo_comentario.save()
             messages.success(request, _("Tu comentario ha sido publicado."))
             return redirect(noticia.get_absolute_url())
+    # Si el usuario intenta comentar sin haber iniciado sesión
     elif request.method == 'POST' and not request.user.is_authenticated:
         messages.error(request, _("Debes iniciar sesión para poder comentar."))
 
