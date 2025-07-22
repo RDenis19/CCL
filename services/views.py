@@ -1,15 +1,15 @@
 # Archivo: services/views.py
 
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .models import Servicio, RecursoServicio, HorarioDisponible, Convenio, SolicitudServicio
 from .forms import SolicitudServicioForm, HorarioDisponibleForm
+from .models import Servicio, RecursoServicio, HorarioDisponible, Convenio, SolicitudServicio
 
 
 def servicio_list_view(request):
@@ -36,34 +36,55 @@ def servicio_detail_view(request, pk):
 
 @login_required
 def solicitud_create_view(request, recurso_pk, horario_pk=None):
-    """Crea una solicitud para un recurso específico y un horario opcional."""
+    """
+    Crea una solicitud para un recurso específico y un horario opcional.
+    """
     recurso = get_object_or_404(RecursoServicio, pk=recurso_pk)
     horario = None
     if horario_pk:
-        horario = get_object_or_404(HorarioDisponible, pk=horario_pk, recurso=recurso, esta_reservado=False)
+        horario = get_object_or_404(
+            HorarioDisponible,
+            pk=horario_pk,
+            recurso=recurso,
+            esta_reservado=False
+        )
 
     if request.method == 'POST':
         form = SolicitudServicioForm(request.POST)
         if form.is_valid():
+            # Iniciar la creación de la solicitud
             solicitud = form.save(commit=False)
             solicitud.solicitante = request.user
             solicitud.recurso = recurso
+
+            # --- LÓGICA ACTUALIZADA ---
             if horario:
-                # Marcar el horario como reservado y asignarlo
+                # Si es una reserva, copiamos las fechas del horario
+                solicitud.fecha_hora_inicio = horario.fecha_hora_inicio
+                solicitud.fecha_hora_fin = horario.fecha_hora_fin
+
+                # Marcamos el horario como reservado
                 horario.esta_reservado = True
                 horario.save()
-                solicitud.horario = horario
+            else:
+                # Si es una solicitud simple, las fechas pueden ser nulas o default
+                # (Asegúrate que el modelo permita null=True o tenga un default)
+                # Para este caso, asumimos que no se guardan fechas.
+                # Nota: El modelo actual exige estas fechas, lo mejor es poner un placeholder.
+                now = timezone.now()
+                solicitud.fecha_hora_inicio = now
+                solicitud.fecha_hora_fin = now
 
             solicitud.save()
             messages.success(request, _("Tu solicitud ha sido enviada con éxito."))
-            return redirect('users:perfil-detail')  # Redirigir al perfil del usuario, por ejemplo
+            return redirect('users:dashboard')
     else:
         form = SolicitudServicioForm()
 
     context = {
         'form': form,
         'recurso': recurso,
-        'horario': horario,
+        'horario': horario,  # Pasamos el horario a la plantilla
         'page_title': f"Solicitar {recurso.nombre}"
     }
     return render(request, 'services/solicitud_form.html', context)

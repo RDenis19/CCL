@@ -14,12 +14,19 @@
                     <div class="alert alert-info">
                         <h5 class="alert-heading">Detalles de tu Solicitud</h5>
                         <p>Estás a punto de solicitar el recurso: <strong>{{ recurso.nombre }}</strong>.</p>
+
+                        {# --- LÓGICA ACTUALIZADA --- #}
+                        {# Esta sección solo se muestra si es una reserva con horario definido #}
                         {% if horario %}
-                            <p class="mb-0"><strong>Horario
-                                seleccionado:</strong> {{ horario.fecha_hora_inicio|date:"d \d\e F, H:i" }}
-                                - {{ horario.fecha_hora_fin|date:"H:i" }}</p>
+                            <hr>
+                            <p class="mb-0">
+                                <strong>Horario seleccionado:</strong>
+                                {{ horario.fecha_hora_inicio|date:"d \d\e F, H:i" }}
+                                - {{ horario.fecha_hora_fin|time:"H:i" }}
+                            </p>
                         {% else %}
-                            <p class="mb-0">Un gestor se pondrá en contacto contigo para coordinar los detalles.</p>
+                            <p class="mb-0 fst-italic">Un gestor se pondrá en contacto contigo para coordinar los
+                                detalles.</p>
                         {% endif %}
                     </div>
 
@@ -28,7 +35,7 @@
 
                         <div class="mb-3">
                             <label for="{{ form.notas_usuario.id_for_label }}" class="form-label">
-                                <strong>{{ form.notas_usuario.label }}</strong> (Opcional)
+                                <strong>{{ form.notas_usuario.label }}</strong>
                             </label>
                             {{ form.notas_usuario }}
                         </div>

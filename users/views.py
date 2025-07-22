@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from memberships.models import SolicitudAfiliacion
 from services.models import SolicitudServicio
 from .forms import PerfilUsuarioUpdateForm, UserRegistrationForm
-from .models import Membresia
 
 
 @login_required
@@ -97,13 +96,14 @@ def dashboard_view(request):
     """
     notificaciones_no_leidas = request.user.notificaciones.filter(leida=False)[:3]
 
+    # --- CONSULTA CORREGIDA ---
+    # Ahora filtramos y ordenamos directamente por los campos del modelo SolicitudServicio.
     proximas_reservas = SolicitudServicio.objects.filter(
         solicitante=request.user,
         estado=SolicitudServicio.Estado.CONFIRMADA,
-        horario__fecha_hora_inicio__gte=timezone.now()
-    ).order_by('horario__fecha_hora_inicio')[:3]
+        fecha_hora_inicio__gte=timezone.now()  # <-- CAMBIO
+    ).order_by('fecha_hora_inicio')[:3]  # <-- CAMBIO
 
-    # --- LÓGICA AÑADIDA ---
     solicitud_pendiente = None
     if not hasattr(request.user, 'membresia'):
         solicitud_pendiente = SolicitudAfiliacion.objects.filter(
@@ -114,6 +114,6 @@ def dashboard_view(request):
         'page_title': "Mi Panel",
         'notificaciones_no_leidas': notificaciones_no_leidas,
         'proximas_reservas': proximas_reservas,
-        'solicitud_pendiente': solicitud_pendiente,  # Pasamos la solicitud al contexto
+        'solicitud_pendiente': solicitud_pendiente,
     }
     return render(request, 'users/dashboard.html', context)

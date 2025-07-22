@@ -1,6 +1,7 @@
 # Archivo: services/admin.py
 
 from django.contrib import admin
+
 from .models import (
     CategoriaServicio, Servicio, DetalleCobertura, Convenio, Beneficio,
     DetalleBeneficio, RecursoServicio, HorarioDisponible, SolicitudServicio
@@ -46,7 +47,7 @@ class SolicitudServicioAdmin(admin.ModelAdmin):
     list_display = ("__str__", "estado", "fecha_creacion", "gestor")
     list_filter = ("estado", "recurso__servicio")
     search_fields = ("solicitante__username", "recurso__nombre")
-    autocomplete_fields = ('solicitante', 'recurso', 'horario', 'gestor')
+    autocomplete_fields = ('solicitante', 'recurso', 'gestor')
 
 
 @admin.register(RecursoServicio)

@@ -13,6 +13,21 @@ class Notificacion(models.Model):
     """
     Representa una notificación para un usuario sobre una acción en el sistema.
     """
+
+    class Tipo(models.TextChoices):
+        SISTEMA = "SISTEMA", _("Sistema")  # Ej: Inició sesión, cerró sesión
+        AFILIACION = "AFILIACION", _("Afiliación")  # Ej: Solicitud aprobada
+        SERVICIOS = "SERVICIOS", _("Servicios")  # Ej: Reserva confirmada
+        CONTENIDO = "CONTENIDO", _("Contenido")  # Ej: Nueva noticia importante
+
+    tipo = models.CharField(
+        _("Tipo de Notificación"),
+        max_length=20,
+        choices=Tipo.choices,
+        default=Tipo.SISTEMA,
+        db_index=True
+    )
+
     # El usuario que recibe la notificación.
     destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notificaciones")
 

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 app_name = 'staff_panel'
@@ -22,4 +23,17 @@ urlpatterns = [
         views.solicitud_servicio_manage_view,
         name='solicitud-servicio-manage'
     ),
+
+    # --- RUTAS AÑADIDAS PARA GESTIÓN DE NOTICIAS ---
+    path('noticias/', views.noticia_list_view, name='noticia-list'),
+    path('noticias/crear/', views.noticia_create_view, name='noticia-create'),
+    path('noticias/<int:pk>/editar/', views.noticia_update_view, name='noticia-update'),
+
+    # --- Gestión de Catálogo de Servicios ---
+    path('servicios/', views.servicio_list_staff_view, name='servicio-list-staff'),
+    path('servicios/crear/', views.servicio_manage_view, name='servicio-create'),
+    path('servicios/<int:pk>/editar/', views.servicio_manage_view, name='servicio-edit'),
+    path('servicios/<int:pk>/recursos/', views.servicio_detail_staff_view, name='servicio-detail-staff'),
+    path('servicios/<int:servicio_pk>/recursos/crear/', views.recurso_manage_view, name='recurso-create'),
+    path('recursos/<int:pk>/editar/', views.recurso_manage_view, name='recurso-edit'),
 ]

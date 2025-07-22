@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h1 class="h2">{{ page_title }}</h1>
+            <a href="{% url 'staff_panel:noticia-create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Crear Nueva Noticia
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Autor</th>
+                            <th>Estado</th>
+                            <th>Publicación</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for noticia in noticias %}
+                            <tr>
+                                <td>{{ noticia.titulo }}</td>
+                                <td>{{ noticia.categoria.nombre }}</td>
+                                <td>{{ noticia.autor.username }}</td>
+                                <td>
+                  <span class="badge {% if noticia.estado == 'PUBLICADA' %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ noticia.get_estado_display }}
+                  </span>
+                                </td>
+                                <td>{{ noticia.fecha_publicacion|default:"-" }}</td>
+                                <td>
+                                    <a href="{% url 'staff_panel:noticia-update' pk=noticia.pk %}"
+                                       class="btn btn-sm btn-warning">Editar</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No hay noticias creadas.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

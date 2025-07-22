@@ -73,10 +73,14 @@
                             <div class="list-group-item">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">{{ reserva.recurso.nombre }}</h6>
-                                    <small class="text-muted">{{ reserva.horario.fecha_hora_inicio|date:"d M, Y" }}</small>
+
+                                    {# --- LÍNEA CORREGIDA --- #}
+                                    <small class="text-muted">{{ reserva.fecha_hora_inicio|date:"d M, Y" }}</small>
                                 </div>
-                                <p class="mb-1">De {{ reserva.horario.fecha_hora_inicio|time:"H:i" }}
-                                    a {{ reserva.horario.fecha_hora_fin|time:"H:i" }}</p>
+
+                                {# --- LÍNEAS CORREGIDAS --- #}
+                                <p class="mb-1">De {{ reserva.fecha_hora_inicio|time:"H:i" }}
+                                    a {{ reserva.fecha_hora_fin|time:"H:i" }}</p>
                             </div>
                         {% empty %}
                             <div class="list-group-item">

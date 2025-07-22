@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h1 class="h2">{{ page_title }}</h1>
+            <a href="{% url 'staff_panel:servicio-create' %}" class="btn btn-primary">Crear Nuevo Servicio</a>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for servicio in servicios %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">{{ servicio.nombre }}</h5>
+                                <small class="text-muted">{{ servicio.categoria.nombre }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'staff_panel:servicio-detail-staff' pk=servicio.pk %}"
+                                   class="btn btn-info btn-sm">Gestionar Recursos</a>
+                                <a href="{% url 'staff_panel:servicio-edit' pk=servicio.pk %}"
+                                   class="btn btn-warning btn-sm">Editar Servicio</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h1 class="h2">{{ page_title }}</h1>
+            <a href="{% url 'staff_panel:recurso-create' servicio_pk=servicio.pk %}" class="btn btn-primary">Añadir
+                Nuevo Recurso</a>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for recurso in recursos %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">{{ recurso.nombre }}</h5>
+                                <small class="text-muted">{{ recurso.get_tipo_display }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'services:recurso-detail' pk=recurso.pk %}"
+                                   class="btn btn-success btn-sm">Gestionar Horarios</a>
+                                <a href="{% url 'staff_panel:recurso-edit' pk=recurso.pk %}"
+                                   class="btn btn-warning btn-sm">Editar Recurso</a>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-center text-muted">Este servicio aún no tiene recursos.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <a href="{% url 'staff_panel:servicio-list-staff' %}" class="btn btn-outline-secondary mt-4">‹ Volver a
+            Servicios</a>
+    </div>
+{% endblock %}

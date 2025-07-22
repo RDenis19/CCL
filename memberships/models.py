@@ -1,4 +1,5 @@
 # Archivo: memberships/models.py
+import uuid
 
 from django.conf import settings
 from django.db import models
@@ -79,3 +80,25 @@ class BeneficiarioPoliza(models.Model):
     class Meta:
         verbose_name = _("Beneficiario de Póliza")
         verbose_name_plural = _("Beneficiarios de Póliza")
+
+
+class DocumentoAdjunto(models.Model):
+    """
+    Almacena un archivo adjunto para una solicitud de afiliación.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    solicitud = models.ForeignKey(SolicitudAfiliacion, on_delete=models.CASCADE, related_name="documentos")
+    nombre_documento = models.CharField(
+        _("Nombre del Documento"),
+        max_length=200,
+        help_text=_("Ej: Copia de Cédula, RUC, Nombramiento de Representante Legal")
+    )
+    archivo = models.FileField(_("Archivo"), upload_to="solicitud_documentos/%Y/%m/")
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Documento Adjunto")
+        verbose_name_plural = _("Documentos Adjuntos")
+
+    def __str__(self):
+        return f"{self.nombre_documento} para solicitud #{self.solicitud.id}"

@@ -1,9 +1,10 @@
 # Archivo: services/models.py
 
+import uuid
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-import uuid
 
 User = settings.AUTH_USER_MODEL
 
@@ -132,7 +133,10 @@ class HorarioDisponible(models.Model):
 
 
 class SolicitudServicio(models.Model):
-    """Una cita, reserva o solicitud de servicio hecha por un usuario."""
+    """
+    Una cita, reserva o solicitud de servicio hecha por un usuario.
+    Guarda el rango de tiempo específico que el usuario solicitó.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     class Estado(models.TextChoices):
@@ -143,15 +147,15 @@ class SolicitudServicio(models.Model):
 
     solicitante = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solicitudes_servicio")
     recurso = models.ForeignKey(RecursoServicio, on_delete=models.CASCADE, related_name="solicitudes")
-    horario = models.OneToOneField(HorarioDisponible, on_delete=models.SET_NULL, null=True, blank=True,
-                                   help_text=_("Llenar solo si es una reserva por tiempo."))
+
+    fecha_hora_inicio = models.DateTimeField(_("Inicio de la Reserva Solicitada"), null=True, blank=True)
+    fecha_hora_fin = models.DateTimeField(_("Fin de la Reserva Solicitada"), null=True, blank=True)
+
     gestor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
                                related_name="solicitudes_gestionadas", limit_choices_to={'is_staff': True})
     estado = models.CharField(_("Estado"), max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
-
     notas_usuario = models.TextField(_("Notas del Usuario"), blank=True)
     respuesta_gestor = models.TextField(_("Respuesta del Gestor"), blank=True)
-
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
