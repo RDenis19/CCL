@@ -1,0 +1,171 @@
+/* --- ESTILOS PARA PÁGINAS DE AUTENTICACIÓN (VERSIÓN MEJORADA) --- */
+
+:root {
+  /* Paleta de Colores de la Cámara de Comercio de Loja */
+  --ccl-azul-principal: #153D6C;
+  --ccl-azul-acento: #0367EC;
+  --ccl-dorado: #B48314;
+  --ccl-amarillo-claro: #F1DB62;
+
+  /* Colores de Sistema y Texto */
+  --ccl-dark: #172b4d;
+  --ccl-light: #f8f9fa;
+  --ccl-text-color: #333;
+  --ccl-text-muted: #6c757d;
+}
+
+.auth-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Ayuda al posicionamiento vertical */
+    justify-content: flex-start; /* Alinea el contenido arriba */
+    align-items: center;
+    padding: 4rem 2rem; /* AUMENTADO: Padding superior para que no pegue al borde */
+    background-color: #ffffff;
+}
+
+#three-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.auth-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Tarjeta principal */
+.auth-card {
+    display: flex;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(153, 132, 13, 0.4);
+    border: 1px solid rgba(234, 232, 94, 0.73);
+    background: rgba(248, 249, 250, 0.95); /* Un poco más opaco para legibilidad */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 550px; /* AUMENTADO: La tarjeta ahora es más ancha */
+    margin: 0; /* AJUSTADO: Eliminamos el margen superior para que obedezca al wrapper */
+}
+
+/* Columna del Formulario */
+.auth-form-side {
+    width: 100%;
+    padding: 3rem; /* AUMENTADO: Más espacio interno */
+}
+
+.auth-form-side form p {
+    margin-bottom: 1.5rem; /* Espacio entre los campos del formulario */
+}
+
+.auth-form-side form label {
+    display: block; /* Asegura que la etiqueta esté en su propia línea */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+
+
+.auth-form-side .auth-logo {
+    max-width: 80px;
+    margin-bottom: 1rem;
+}
+
+.auth-form-side .auth-title {
+    color: var(--ccl-azul-principal);
+    font-weight: 700;
+}
+
+/* Espaciado de elementos del formulario */
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem; /* AUMENTADO: Más espacio entre campos */
+}
+
+.form-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: var(--ccl-text-muted);
+}
+
+.form-control {
+    height: 50px;
+    padding-left: 3rem;
+    border: 1px solid #ced4da;
+}
+.form-control:focus {
+    border-color: var(--ccl-dorado);
+    box-shadow: 0 0 0 0.2rem rgba(180, 131, 20, 0.25);
+}
+
+.d-flex.justify-content-between {
+    margin-bottom: 2rem; /* AUMENTADO: Más espacio antes del botón */
+}
+
+/* --- ESTILO DEL BOTÓN (AHORA DORADO) --- */
+.auth-button {
+    background-color: var(--ccl-dorado); /* NUEVO: Color dorado */
+    border-color: var(--ccl-dorado); /* NUEVO: Borde dorado */
+    font-weight: bold;
+    padding: 0.75rem;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.auth-button:hover {
+    background-color: #c99a2e; /* Un dorado un poco más oscuro al pasar el mouse */
+    border-color: #c99a2e;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(180, 131, 20, 0.3);
+}
+
+/* Enlaces */
+.auth-form-side a {
+    color: var(--ccl-azul-acento);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.auth-form-side a:hover {
+    text-decoration: underline;
+}
+
+.text-center.mt-4 {
+    margin-top: 2rem !important; /* AUMENTADO: Espacio antes de "¿No tienes cuenta?" */
+}
+
+
+/* --- ESTILOS PARA EL BOTÓN DE REGRESO --- */
+/* Posicionamos la tarjeta de forma relativa para que el botón sepa dónde ubicarse */
+.auth-form-side {
+    position: relative;
+}
+
+/* Estilo específico y seguro para el botón de regreso */
+.back-to-login-btn {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    color: var(--ccl-text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espacio entre el icono y el texto */
+    transition: color 0.2s ease-in-out;
+}
+
+.back-to-login-btn:hover {
+    color: var(--ccl-dorado); /* Cambia a dorado al pasar el mouse */
+    text-decoration: none;
+}

@@ -1,9 +1,22 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'users/css/perfil_form.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
     <div class="row justify-content-center">
+
+        <div class="hex-bg">
+            <div class="hex h1"></div>
+            <div class="hex h2"></div>
+            <div class="hex h3"></div>
+            <div class="hex h4"></div>
+        </div>
+
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-white py-3">

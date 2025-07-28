@@ -1,40 +1,116 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+{% block title %}Convenios - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'services/css/convenio_list.css' %}">
+{% endblock extra_head %}
 
 {% block content %}
-    <div class="container py-4">
-        <div class="p-5 mb-4 bg-light rounded-3">
-            <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">{{ page_title }}</h1>
-                <p class="col-md-8 fs-4">Descubre los descuentos y beneficios exclusivos que nuestras empresas aliadas
-                    ofrecen a todos nuestros socios.</p>
-            </div>
+
+    <section class="hero-convenios">
+        <div class="constellation-background">
+            <div class="stars-layer-1"></div>
+            <div class="stars-layer-2"></div>
+            <div class="stars-layer-3"></div>
+            <div class="stars-layer-twinkle"></div>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for convenio in convenios %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ convenio.nombre_entidad }}</h5>
-                            {% with primer_beneficio=convenio.beneficios.first %}
-                                {% if primer_beneficio %}
-                                    <p class="card-text text-muted flex-grow-1">{{ primer_beneficio.descripcion|truncatewords:15 }}</p>
-                                {% endif %}
-                            {% endwith %}
-                            <a href="{% url 'services:convenio-detail' pk=convenio.pk %}"
-                               class="btn btn-outline-primary mt-auto">
-                                Ver Beneficios
-                            </a>
-                        </div>
+        <div class="hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 text-center text-white">
+                    <h1 class="display-3 fw-bolder animar-entrada">Red de Beneficios para Socios</h1>
+                    <p class="lead mt-3 animar-entrada" data-delay="100">
+                        Accede a descuentos y tarifas preferenciales en una amplia red de empresas aliadas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN "¿CÓMO FUNCIONAN?" REDISEÑADA -->
+    <section class="how-it-works py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold animar-entrada">¿Cómo Funcionan los Convenios?</h2>
+                    <p class="lead text-muted animar-entrada" data-delay="100">Acceder a tus beneficios es un proceso simple y rápido.</p>
+                </div>
+            </div>
+            <!-- Fila con conectores visuales -->
+            <div class="row steps-row">
+                <div class="col-lg-4 animar-entrada" data-delay="200">
+                    <div class="step-card">
+                        <div class="step-icon"><i class="bi bi-person-check-fill"></i></div>
+                        <h5 class="step-title">1. Sé Socio Activo</h5>
+                        <p class="step-description">Asegúrate de que tu membresía esté al día para poder disfrutar de todos los beneficios que ofrecemos.</p>
                     </div>
                 </div>
-            {% empty %}
-                <div class="col-12">
-                    <div class="alert alert-info">No hay convenios disponibles en este momento.</div>
+                <div class="col-lg-4 animar-entrada" data-delay="300">
+                    <div class="step-card">
+                        <div class="step-icon"><i class="bi bi-search"></i></div>
+                        <h5 class="step-title">2. Infórmate y Elige</h5>
+                        <p class="step-description">Explora nuestro catálogo, conoce los detalles de cada convenio y elige el que más se ajuste a tus necesidades.</p>
+                    </div>
                 </div>
-            {% endfor %}
+                <div class="col-lg-4 animar-entrada" data-delay="400">
+                    <div class="step-card">
+                        <div class="step-icon"><i class="bi bi-award-fill"></i></div>
+                        <h5 class="step-title">3. Disfruta el Beneficio</h5>
+                        <p class="step-description">Presenta tu credencial de socio en el establecimiento aliado y disfruta de tus descuentos y tarifas exclusivas.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- SECCIÓN "EMPRESAS ALIADAS" REDISEÑADA -->
+    <section class="section-convenios py-5 bg-light">
+        <div class="container">
+             <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold animar-entrada">Empresas Aliadas</h2>
+                </div>
+            </div>
+            <div class="row g-4">
+                {% for convenio in convenios %}
+                    <div class="col-lg-4 col-md-6 animar-entrada" data-delay="{{ forloop.counter|add:'4' }}00">
+                        <!-- Aplicamos la nueva clase 'convenio-card-premium' -->
+                        <div class="convenio-card convenio-card-premium">
+                            <div class="convenio-card-body">
+                                <h5 class="convenio-title">{{ convenio.nombre_entidad }}</h5>
+                                {% with primer_beneficio=convenio.beneficios.first %}
+                                    {% if primer_beneficio %}
+                                        <p class="convenio-description">{{ primer_beneficio.descripcion|truncatewords:20 }}</p>
+                                    {% else %}
+                                        <p class="convenio-description">Descubre los beneficios exclusivos disponibles para socios.</p>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="convenio-card-footer">
+                                <a href="{% url 'services:convenio-detail' pk=convenio.pk %}" class="btn-convenio">
+                                    <span>Ver Beneficios</span> <i class="bi bi-arrow-right-short"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-light border-0 text-center py-5">
+                            <h4 class="alert-heading">No hay convenios disponibles</h4>
+                            <p class="mb-0">Estamos trabajando para añadir nuevos beneficios. ¡Vuelve pronto!</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
 {% endblock content %}
+
+{% block extra_js %}
+    {# Se eliminó Isotope JS que ya no es necesario #}
+    <script src="{% static 'services/js/convenio_list.js' %}"></script>
+{% endblock extra_js %}

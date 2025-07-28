@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/contacto.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+
+    <section class="hero-contacto text-center">
+        <!-- El fondo animado se controlará 100% desde CSS -->
+        <div class="container anim-fade-in-down">
+            <h1 class="display-3 fw-bold">Ponte en Contacto</h1>
+            <p class="lead mt-3">Estamos aquí para ayudarte. Contáctanos a través de cualquiera de nuestros canales.</p>
+        </div>
+    </section>
+
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 anim-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="contact-info-card">
+                        <div class="contact-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                        <h5>Nuestra Oficina</h5>
+                        <p>Rocafuerte y Bolívar 153-37<br>Loja, Ecuador</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 anim-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="contact-info-card">
+                        <div class="contact-icon"><i class="bi bi-telephone-fill"></i></div>
+                        <h5>Llámanos</h5>
+                        <a href="tel:+59372571389">(07) 257 1389</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 anim-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="contact-info-card">
+                        <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+                        <h5>Escríbenos</h5>
+                        <a href="mailto:info@camaradecomercioloja.org">info@camaradecomercioloja.org</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 anim-fade-in-left">
+                    <div class="contact-form-section">
+                        <h3 class="mb-4 fw-bold">Envíanos un Mensaje</h3>
+                        <form>
+                            <div class="mb-3">
+                                <label for="contact-name" class="form-label">Nombre Completo</label>
+                                <input type="text" class="form-control form-control-custom" id="contact-name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact-email" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control form-control-custom" id="contact-email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact-message" class="form-label">Mensaje</label>
+                                <textarea class="form-control form-control-custom" id="contact-message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 btn-lg">Enviar Mensaje</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6 anim-fade-in-right">
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3980.11186719818!2d-79.2039866852399!3d-4.008269997034177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91cb377042572a69%3A0xf67228968d70659a!2sC%C3%A1mara%20de%20Comercio%20de%20Loja!5e0!3m2!1ses!2sec!4v1627402325123!5m2!1ses!2sec" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}

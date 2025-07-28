@@ -1,0 +1,104 @@
+/* Variables de color institucional */
+:root {
+  --ccl-azul-principal: #153D6C;
+  --ccl-azul-acento: #0367EC;
+  --ccl-dorado: #B48314;
+  --ccl-amarillo-claro: #F1DB62;
+  --ccl-light-gray-bg: #f4f7fa;
+  --ccl-card-border: #e9ecef;
+}
+
+/* Fondo institucional suave */
+body {
+  background: linear-gradient(135deg, #f9fbfc 0%, #eef3f8 100%);
+}
+
+/* Contenedor principal con espaciado vertical */
+.container-detail {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+/* Card con animación de entrada */
+.card {
+  animation: fadeInUpDetail 0.7s ease-out both;
+  border-radius: 1rem;
+  border: none;
+  background-color: #fff;
+}
+
+/* Animación */
+@keyframes fadeInUpDetail {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header del card */
+.card-header {
+  background-color: var(--ccl-light-gray-bg);
+  border-bottom: 1px solid var(--ccl-card-border);
+}
+.card-header h4 {
+  font-weight: 600;
+  color: var(--ccl-azul-principal);
+  margin-bottom: 0;
+}
+
+/* Subtítulos de secciones */
+.card-body h5 {
+  color: var(--ccl-azul-principal);
+  margin-top: 1.5rem;
+  font-weight: 600;
+  border-left: 4px solid var(--ccl-dorado);
+  padding-left: 0.8rem;
+}
+
+/* Campos de texto */
+.card-body p {
+  margin-bottom: 0.5rem;
+  color: #444;
+  animation: fadeInUpDetail 0.4s ease-out;
+}
+
+/* Etiquetas importantes */
+.card-body strong {
+  color: var(--ccl-azul-acento);
+}
+
+/* Badges con estilo */
+.badge {
+  font-size: 0.95rem;
+  padding: 0.5em 0.75em;
+  border-radius: 0.5rem;
+  animation: fadeInUpDetail 0.8s ease-out;
+}
+
+/* Alerta de no solicitud enviada */
+.alert-info {
+  background-color: #eaf4ff;
+  border: 1px solid #bee1ff;
+  animation: fadeInUpDetail 0.6s ease-out;
+  border-radius: 0.75rem;
+}
+.alert-info p {
+  font-size: 1.1rem;
+  color: var(--ccl-azul-principal);
+}
+.alert-info .btn {
+  margin-top: 1rem;
+  background-color: var(--ccl-azul-acento);
+  border-color: var(--ccl-azul-acento);
+  font-weight: 600;
+  transition: background-color 0.3s ease-in-out;
+}
+.alert-info .btn:hover {
+  background-color: var(--ccl-dorado);
+  border-color: var(--ccl-dorado);
+  color: white;
+}

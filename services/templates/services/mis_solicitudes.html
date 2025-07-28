@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'services/css/mis_solicitudes.css' %}">
+{% endblock extra_head %}
 
 {% block content %}
     <div class="container py-4">
@@ -55,3 +60,7 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'services/js/mis_solicitudes.js' %}"></script>
+{% endblock extra_js %}

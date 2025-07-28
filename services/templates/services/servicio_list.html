@@ -1,26 +1,37 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    {# La ruta ya es correcta, enlazando al CSS de esta app #}
+    <link rel="stylesheet" href="{% static 'services/css/servicios_custom.css'' %}">
+{% endblock extra_head %}
+
 {% block content %}
     <div class="container py-4">
-        <div class="p-5 mb-4 bg-light rounded-3">
-            <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">{{ page_title }}</h1>
-                <p class="col-md-8 fs-4">Explora todos los beneficios y servicios que tenemos disponibles para nuestros
-                    socios. Haz clic en un servicio para ver más detalles y realizar una solicitud.</p>
+        <section class="services-hero text-white text-center">
+            <div class="container position-relative">
+                <div class="anim-fade-in-down">
+                    <h1 class="display-4 fw-bold">{{ page_title }}</h1>
+                    <p class="lead mt-3 mx-auto" style="max-width: 700px;">
+                        Explora todos los beneficios y servicios que tenemos disponibles para nuestros
+                        socios. Haz clic en un servicio para ver más detalles y realizar una solicitud.
+                    </p>
+                </div>
             </div>
-        </div>
+        </section>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for servicio in servicios %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
+                <div class="col anim-fade-in-up" style="animation-delay: {% cycle '0.1s' '0.2s' '0.3s' %}">
+                    
+                    <div class="card h-100 shadow-sm card-3d">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ servicio.nombre }}</h5>
                             <p class="card-text text-muted flex-grow-1">{{ servicio.descripcion|truncatewords:20 }}</p>
                             <a href="{% url 'services:servicio-detail' pk=servicio.pk %}"
-                               class="btn btn-primary mt-auto">
+                            class="btn btn-primary mt-auto">
                                 Ver Detalles y Recursos
                             </a>
                         </div>

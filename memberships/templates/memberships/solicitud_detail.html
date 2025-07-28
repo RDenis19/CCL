@@ -1,61 +1,69 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'memberships/css/solicitud_detail.css' %}">
+{% endblock extra_head %}
+
+
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">{{ page_title }}</h4>
-                </div>
-                <div class="card-body">
-                    {% if solicitud %}
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Fecha de Envío:</strong>
-                                <p class="text-muted">{{ solicitud.fecha_creacion|date:"d \d\e F \d\e Y, H:i" }}</p>
+    <div class="container container-detail">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h4 class="mb-0">{{ page_title }}</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if solicitud %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Fecha de Envío:</strong>
+                                    <p class="text-muted">{{ solicitud.fecha_creacion|date:"d \d\e F \d\e Y, H:i" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Estado de la Solicitud:</strong>
+                                    <p>
+                                        {% if solicitud.estado == 'PENDIENTE' %}
+                                            <span class="badge bg-warning text-dark">{{ solicitud.get_estado_display }}</span>
+                                        {% elif solicitud.estado == 'APROBADA' %}
+                                            <span class="badge bg-success">{{ solicitud.get_estado_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ solicitud.get_estado_display }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <strong>Estado de la Solicitud:</strong>
-                                <p>
-                                    {% if solicitud.estado == 'PENDIENTE' %}
-                                        <span class="badge bg-warning text-dark">{{ solicitud.get_estado_display }}</span>
-                                    {% elif solicitud.estado == 'APROBADA' %}
-                                        <span class="badge bg-success">{{ solicitud.get_estado_display }}</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">{{ solicitud.get_estado_display }}</span>
-                                    {% endif %}
-                                </p>
+
+                            <hr>
+
+                            {% with detalle_natural=solicitud.detallesolicitudnatural detalle_juridica=solicitud.detallesolicitudjuridica %}
+                                {% if detalle_natural %}
+                                    <h5>Datos de Persona Natural</h5>
+                                    <p>
+                                        <strong>Nombres:</strong> {{ detalle_natural.nombres }} {{ detalle_natural.apellidos }}
+                                    </p>
+                                    <p><strong>Cédula:</strong> {{ detalle_natural.cedula }}</p>
+                                    <p><strong>Celular:</strong> {{ detalle_natural.celular }}</p>
+                                {% elif detalle_juridica %}
+                                    <h5>Datos de Persona Jurídica</h5>
+                                    <p><strong>Razón Social:</strong> {{ detalle_juridica.razon_social }}</p>
+                                    <p><strong>RUC:</strong> {{ detalle_juridica.ruc_empresa }}</p>
+                                    <p><strong>Representante
+                                        Legal:</strong> {{ detalle_juridica.nombre_completo_representante_legal }}</p>
+                                {% endif %}
+                            {% endwith %}
+
+                        {% else %}
+                            <div class="alert alert-info text-center">
+                                <p>Aún no has enviado ninguna solicitud de afiliación.</p>
+                                <a href="{% url 'memberships:solicitud-selector' %}" class="btn btn-primary">Iniciar
+                                    Solicitud Ahora</a>
                             </div>
-                        </div>
-
-                        <hr>
-
-                        {% with detalle_natural=solicitud.detallesolicitudnatural detalle_juridica=solicitud.detallesolicitudjuridica %}
-                            {% if detalle_natural %}
-                                <h5>Datos de Persona Natural</h5>
-                                <p>
-                                    <strong>Nombres:</strong> {{ detalle_natural.nombres }} {{ detalle_natural.apellidos }}
-                                </p>
-                                <p><strong>Cédula:</strong> {{ detalle_natural.cedula }}</p>
-                                <p><strong>Celular:</strong> {{ detalle_natural.celular }}</p>
-                            {% elif detalle_juridica %}
-                                <h5>Datos de Persona Jurídica</h5>
-                                <p><strong>Razón Social:</strong> {{ detalle_juridica.razon_social }}</p>
-                                <p><strong>RUC:</strong> {{ detalle_juridica.ruc_empresa }}</p>
-                                <p><strong>Representante
-                                    Legal:</strong> {{ detalle_juridica.nombre_completo_representante_legal }}</p>
-                            {% endif %}
-                        {% endwith %}
-
-                    {% else %}
-                        <div class="alert alert-info text-center">
-                            <p>Aún no has enviado ninguna solicitud de afiliación.</p>
-                            <a href="{% url 'memberships:solicitud-selector' %}" class="btn btn-primary">Iniciar
-                                Solicitud Ahora</a>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

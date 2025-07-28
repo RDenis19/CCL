@@ -1,0 +1,47 @@
+/* --- ESTILOS PARA LA PÁGINA DE DETALLE DE RECURSO Y CALENDARIO --- */
+
+/* 1. Estilos para que los eventos y slots del calendario sean clickables */
+.fc-timegrid-slot-lane,
+.fc-event {
+    cursor: pointer;
+}
+
+/* 2. Personalización de colores de FullCalendar para que coincida con la marca */
+:root {
+    --fc-border-color: #dee2e6;
+    --fc-day-bg-color: #ffffff;
+    --fc-today-bg-color: rgba(3, 103, 236, 0.05); /* Azul acento muy claro */
+    --fc-button-bg-color: var(--primary-dark);
+    --fc-button-active-bg-color: var(--primary-light);
+    --fc-button-hover-bg-color: var(--primary-light);
+}
+
+.fc .fc-button-primary {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: var(--fc-today-bg-color) !important;
+}
+
+/* 3. Estilo del contenedor del calendario */
+.calendar-card {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+/* 4. Mejora visual para el modal */
+.modal-header {
+    background-color: var(--primary-dark);
+    color: white;
+}
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}

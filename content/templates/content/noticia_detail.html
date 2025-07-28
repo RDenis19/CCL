@@ -1,79 +1,99 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+{% block title %}{{ noticia.titulo }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    {# Usamos el mismo archivo CSS que la lista para mantener la consistencia #}
+    <link rel="stylesheet" href="{% static 'content/css/noticias_list.css' %}">
+{% endblock extra_head %}
+
 
 {% block content %}
-    <div class="container py-5">
+    <div class="container py-5 mt-4">
         <div class="row justify-content-center">
             <div class="col-lg-9">
 
-                <article>
-                    <header class="mb-4">
-                        <h1 class="fw-bolder mb-1">{{ noticia.titulo }}</h1>
-                        <div class="text-muted fst-italic mb-2">
-                            Publicado el {{ noticia.fecha_publicacion|date:"d \d\e F, Y" }}
-                            por {{ noticia.autor.get_full_name|default:noticia.autor.username }}
+                <div class="mb-4 anim-fade-in-up">
+                    <a href="{% url 'content:noticia-list' %}" class="btn btn-outline-secondary">‹ Volver a Noticias</a>
+                </div>
+
+                <article class="blog-post-detail">
+
+                    <header class="article-header animar-entrada">
+                        <a href="#" class="post-category-link">{{ noticia.categoria.nombre }}</a>
+                        <h1 class="display-5 fw-bolder my-3">{{ noticia.titulo }}</h1>
+                        <div class="post-meta justify-content-start">
+                            <span class="post-meta-item"><i class="bi bi-person-fill"></i> {{ noticia.autor.get_full_name|default:noticia.autor.username }}</span>
+                            <span class="post-meta-item"><i class="bi bi-calendar3"></i> {{ noticia.fecha_publicacion|date:"d \d\e F, Y" }}</span>
+                            <span class="post-meta-item"><i class="bi bi-chat-dots-fill"></i> {{ comentarios.count }} Comentarios</span>
                         </div>
-                        <span class="badge bg-primary">{{ noticia.categoria.nombre }}</span>
                     </header>
-                    <section class="mb-5">
+
+                    {% if noticia.imagen %}
+                    <!-- 1. Imagen principal con animación de entrada -->
+                    <figure class="mb-4 animar-entrada" data-delay="100">
+                        <img class="img-fluid rounded-3 shadow-lg" src="{{ noticia.imagen.url }}" alt="{{ noticia.titulo }}">
+                    </figure>
+                    {% endif %}
+                    
+                    <!-- 2. Contenido del artículo con animación de entrada -->
+                    <section class="mb-5 post-content animar-entrada" data-delay="200">
                         {{ noticia.contenido|linebreaks }}
                     </section>
+
                 </article>
 
                 <hr class="my-5">
 
-                <section>
-                    <div class="card bg-light shadow-sm">
-                        <div class="card-body">
-                            <h5 class="mb-3">Deja tu comentario</h5>
-                            {% if user.is_authenticated %}
-                                <form method="post" novalidate>
-                                    {% csrf_token %}
-                                    {{ form_comentario.contenido }}
-                                    <button class="btn btn-primary mt-2" type="submit">Publicar Comentario</button>
-                                </form>
-                            {% else %}
-                                <div class="alert alert-warning">
-                                    Debes <a href="{% url 'users:login' %}?next={{ request.path }}">iniciar sesión</a>
-                                    para poder comentar.
-                                </div>
-                            {% endif %}
-
-                            <div class="my-4 border-top"></div>
-
-                            {% for comentario in comentarios %}
-                                <div class="d-flex mb-4">
+                <!-- SECCIÓN DE COMENTARIOS REDISEÑADA -->
+                <section class="comments-section animar-entrada" data-delay="300">
+                    <h3 class="mb-4">Comentarios ({{ comentarios.count }})</h3>
+                    
+                    {% if user.is_authenticated %}
+                        <!-- Formulario para nuevo comentario -->
+                        <div class="card mb-5 shadow-sm new-comment-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
                                     <div class="flex-shrink-0">
-                                        {% if comentario.autor.perfil.avatar %}
-                                            <img class="rounded-circle" src="{{ comentario.autor.perfil.avatar.url }}"
-                                                 alt="Avatar" width="50" height="50"/>
-                                        {% else %}
-                                            <svg class="rounded-circle bg-secondary" width="50" height="50"
-                                                 xmlns="http://www.w3.org/2000/svg" role="img"
-                                                 aria-label="Avatar por defecto">
-                                                <title>Avatar de {{ comentario.autor.username }}</title>
-                                                <rect width="100%" height="100%" fill="#dee2e6"></rect>
-                                                <text x="50%" y="50%" fill="#6c757d" dy=".3em" text-anchor="middle"
-                                                      font-size="1.5rem">
-                                                    {{ comentario.autor.username.0|upper }}
-                                                </text>
-                                            </svg>
-                                        {% endif %}
-                                    </div>
-                                    <div class="ms-3">
-                                        <div class="fw-bold">{{ comentario.autor.get_full_name|default:comentario.autor.username }}</div>
-                                        <div class="text-muted small">{{ comentario.fecha_creacion|timesince }} atrás
+                                        <div class="avatar-placeholder rounded-circle">
+                                            <span>{{ user.username.0|upper }}</span>
                                         </div>
-                                        {{ comentario.contenido|linebreaksbr }}
+                                    </div>
+                                    <div class="ms-3 w-100">
+                                        <form method="post" novalidate>
+                                            {% csrf_token %}
+                                            <textarea name="contenido" class="form-control form-control-light" rows="3" placeholder="Escribe tu comentario..."></textarea>
+                                            <button class="btn btn-primary mt-2" type="submit">Publicar Comentario</button>
+                                        </form>
                                     </div>
                                 </div>
-                            {% empty %}
-                                <p class="text-center text-muted">Aún no hay comentarios. ¡Sé el primero en
-                                    comentar!</p>
-                            {% endfor %}
+                            </div>
                         </div>
+                    {% else %}
+                        <div class="alert alert-light border text-center">
+                            Debes <a href="{% url 'users:login' %}?next={{ request.path }}" class="fw-bold">iniciar sesión</a> para poder comentar.
+                        </div>
+                    {% endif %}
+
+                    <!-- Lista de comentarios existentes -->
+                    <div class="comment-list">
+                        {% for comentario in comentarios %}
+                            <div class="comment d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-placeholder rounded-circle">
+                                        <span>{{ comentario.autor.username.0|upper }}</span>
+                                    </div>
+                                </div>
+                                <div class="ms-3 comment-body">
+                                    <div class="fw-bold">{{ comentario.autor.get_full_name|default:comentario.autor.username }}</div>
+                                    <div class="text-muted small mb-2">{{ comentario.fecha_creacion|timesince }} atrás</div>
+                                    <p class="mb-0">{{ comentario.contenido|linebreaksbr }}</p>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-center text-muted mt-5">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+                        {% endfor %}
                     </div>
                 </section>
 
@@ -81,3 +101,8 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block extra_js %}
+    {# Reutilizamos el mismo JS de la lista para las animaciones #}
+    <script src="{% static 'content/js/noticias_list.js' %}"></script>
+{% endblock extra_js %}

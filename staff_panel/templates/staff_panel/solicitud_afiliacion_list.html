@@ -1,36 +1,44 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
-{% block content %}
-    <div class="container py-4">
-        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
 
-        <div class="mb-3">
-            <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}"
-               class="btn btn-sm btn-outline-secondary">Todos</a>
+{% block content %}
+<div class="dashboard-background-gold">
+    <div class="container py-4">
+        <h1 class="display-6 border-bottom pb-3 mb-4 text-dark text-center fw-bold">{{ page_title }}</h1>
+
+        <div class="mb-4 text-center">
+            <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}" class="btn btn-outline-gold btn-sm me-2">Todos</a>
             {% for value, label in estados %}
-                <a href="?estado={{ value }}" class="btn btn-sm btn-outline-secondary">{{ label }}</a>
+                <a href="?estado={{ value }}" class="btn btn-outline-gold btn-sm me-2">{{ label }}</a>
             {% endfor %}
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card dashboard-card border-gold shadow-sm animate__animated animate__fadeIn">
+            <div class="card-header text-white bg-gold">
+                <h5 class="mb-0">Listado de Solicitudes</h5>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
-                        <thead>
+                        <thead class="table-light">
                         <tr>
                             <th>ID</th>
                             <th>Solicitante</th>
-                            <th>Fecha de Envío</th>
+                            <th>Fecha de Envió</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for solicitud in solicitudes %}
-                            <tr>
-                                <td>#{{ solicitud.id }}</td>
+                            <tr class="table-row-hover">
+                                <td><strong>#{{ solicitud.id }}</strong></td>
                                 <td>{{ solicitud.solicitante.get_full_name|default:solicitud.solicitante.username }}</td>
                                 <td>{{ solicitud.fecha_creacion|date:"d M, Y" }}</td>
                                 <td>
@@ -44,16 +52,12 @@
                                 </td>
                                 <td>
                                     <a href="{% url 'staff_panel:solicitud-afiliacion-manage' pk=solicitud.pk %}"
-                                       class="btn btn-sm btn-info">
-                                        Ver y Gestionar
-                                    </a>
+                                       class="btn btn-sm btn-outline-info">Ver y Gestionar</a>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No hay solicitudes que coincidan con
-                                    el filtro.
-                                </td>
+                                <td colspan="5" class="text-center text-muted py-4">No hay solicitudes que coincidan con el filtro.</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -62,4 +66,9 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}

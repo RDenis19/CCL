@@ -1,36 +1,46 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    {# Enlazamos las hojas de estilo de FullCalendar y la nuestra #}
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="{% static 'services/css/servicios_custom.css' %}">
+    <link rel="stylesheet" href="{% static 'services/css/recurso_detail.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
-    <div class="container py-4">
-        <div class="pb-3 mb-4 border-bottom d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="display-6">{{ page_title }}</h1>
 
-                {# --- LÓGICA DE MENSAJES DIFERENTES --- #}
-                {% if user.is_staff %}
-                    <p class="lead text-muted">Haz clic en una fecha o arrastra el cursor sobre el calendario para crear
-                        un nuevo bloque de disponibilidad.</p>
-                {% else %}
-                    <p class="lead text-muted">Haz clic en un bloque verde "Disponible" para iniciar tu reserva.</p>
-                {% endif %}
+    <section class="service-detail-hero text-white">
+        <div class="container anim-fade-in-down">
+            <div class="d-flex justify-content-between align-items-center">
+                 <div>
+                    <h1 class="display-6">{{ page_title }}</h1>
+                    {% if user.is_staff %}
+                        <p class="lead mb-0">Haz clic o arrastra sobre el calendario para crear un nuevo bloque de disponibilidad.</p>
+                    {% else %}
+                        <p class="lead mb-0">Haz clic en un bloque verde "Disponible" para iniciar tu reserva.</p>
+                    {% endif %}
+                 </div>
+                <a href="{% url 'services:servicio-detail' pk=recurso.servicio.pk %}" class="btn btn-outline-light">‹ Volver al Servicio</a>
             </div>
-            <a href="{% url 'services:servicio-detail' pk=recurso.servicio.pk %}" class="btn btn-outline-secondary">‹
-                Volver al Servicio</a>
         </div>
+    </section>
 
-        <div class="card shadow-sm">
+    <div class="container py-5">
+        <div class="card shadow-sm calendar-card anim-fade-in-up">
             <div class="card-body">
-                <div id="calendar"></div>
+                <div id="calendar" 
+                     data-is-staff="{{ user.is_staff|yesno:'true,false' }}"
+                     data-events-url="{% url 'services:recurso-eventos-json' pk=recurso.pk %}">
+                </div>
             </div>
         </div>
     </div>
 
-    {# --- MODAL SOLO PARA EL PERSONAL (STAFF) --- #}
     {% if user.is_staff %}
-        <div class="modal fade" id="addHorarioModal" tabindex="-1" aria-labelledby="addHorarioModalLabel"
-             aria-hidden="true">
+        <div class="modal fade" id="addHorarioModal" tabindex="-1" aria-labelledby="addHorarioModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -38,10 +48,12 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="horarioForm" method="post">
+                        <form id="horarioForm" method="post" action="{% url 'services:recurso-detail' pk=recurso.pk %}">
                             {% csrf_token %}
                             {{ form_horario.as_p }}
-                            <button type="submit" class="btn btn-primary">Guardar Horario</button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Guardar Horario</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -52,91 +64,7 @@
 {% endblock content %}
 
 {% block extra_js %}
+    {# Enlazamos las librerías de FullCalendar y nuestro nuevo script #}
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('calendar');
-            const isStaff = {{ user.is_staff|yesno:"true,false" }};
-
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: "{% url 'services:recurso-eventos-json' pk=recurso.pk %}",
-                locale: 'es',
-                selectable: isStaff,
-                slotDuration: '01:00:00',
-                slotLabelInterval: '01:00:00',
-                allDaySlot: false,
-                nowIndicator: true, // <-- MEJORA 1: Muestra la línea de la hora actual
-
-                // --- MEJORA 2: Cambia el cursor para indicar que se puede hacer clic ---
-                // (Esto requiere un poco de CSS)
-
-                eventClick: function (info) {
-                    info.jsEvent.preventDefault();
-                    if (info.event.url) {
-                        window.location.href = info.event.url;
-                    }
-                },
-
-                // --- MEJORA 3: Permite crear un horario con un solo clic ---
-                dateClick: function (info) {
-                    // Esta función solo se activa para el personal (staff)
-                    if (!isStaff) return;
-
-                    // Crea un evento de 1 hora por defecto al hacer clic
-                    const end = new Date(info.date.getTime() + 60 * 60 * 1000); // Añade 1 hora
-
-                    // Llama a la misma función 'select' que usamos para arrastrar
-                    calendar.select(info.date, end);
-                },
-
-                select: function (info) {
-                    if (!isStaff) return;
-
-                    const horarioModal = new bootstrap.Modal(document.getElementById('addHorarioModal'));
-                    const modalTitle = document.getElementById('addHorarioModalLabel');
-                    const inicioFieldFecha = document.getElementById('id_fecha_hora_inicio_0');
-                    const inicioFieldHora = document.getElementById('id_fecha_hora_inicio_1');
-                    const finFieldFecha = document.getElementById('id_fecha_hora_fin_0');
-                    const finFieldHora = document.getElementById('id_fecha_hora_fin_1');
-
-                    const startDate = info.start;
-                    const endDate = info.end;
-
-                    // Actualizar el título del modal dinámicamente
-                    modalTitle.textContent = `Crear Horario el ${startDate.toLocaleDateString('es-ES', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}`;
-
-                    inicioFieldFecha.value = startDate.toISOString().split('T')[0];
-                    finFieldFecha.value = endDate.toISOString().split('T')[0];
-                    inicioFieldHora.value = startDate.toTimeString().substring(0, 5);
-                    finFieldHora.value = endDate.toTimeString().substring(0, 5);
-
-                    horarioModal.show();
-                }
-            });
-            calendar.render();
-        });
-    </script>
-
-    {# CSS para la Mejora 2 (cambiar el cursor) #}
-    <style>
-        .fc-timegrid-slot-lane {
-            cursor: pointer;
-        }
-
-        .fc-event {
-            cursor: pointer;
-        }
-    </style>
+    <script src="{% static 'services/js/recurso_detail.js' %}"></script>
 {% endblock extra_js %}

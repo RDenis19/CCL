@@ -1,49 +1,68 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Iniciar Sesión - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    {# Reutilizamos la misma hoja de estilos que el registro #}
+    <link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
-    {# Añadimos 'align-items-center' y un estilo de altura mínima a la fila #}
-    <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">Iniciar Sesión</h4>
+<div class="auth-wrapper">
+    <div id="three-background"></div>
+    
+    <div class="container auth-container">
+        <div class="card auth-card anim-fade-in-up" style="max-width: 450px;">
+            <div class="auth-form-side">
+                <div class="text-center mb-4">
+                    <img src="{% static 'img/CCL_Logo.png' %}" alt="Logo CCL" class="auth-logo">
+                    <h3 class="auth-title mt-3">Bienvenido de Vuelta</h3>
+                    <p class="text-muted">Ingresa a tu cuenta para continuar.</p>
                 </div>
-                <div class="card-body">
-                    <p class="card-text text-muted">Ingresa tus credenciales para acceder a tu cuenta.</p>
 
-                    {% if form.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            Tu usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.
-                        </div>
-                    {% endif %}
-
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Usuario</label>
-                            <input type="text" name="username" class="form-control"
-                                   id="{{ form.username.id_for_label }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">Contraseña</label>
-                            <input type="password" name="password" class="form-control"
-                                   id="{{ form.password.id_for_label }}">
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Ingresar</button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="{% url 'users:password_reset' %}">¿Olvidaste tu contraseña?</a>
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        Tu usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.
                     </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <i class="bi bi-person form-icon"></i>
+                        <input type="text" name="username" class="form-control" placeholder="Nombre de usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="bi bi-lock form-icon"></i>
+                        <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                            <label class="form-check-label small" for="rememberMe">
+                                Recordarme
+                            </label>
+                        </div>
+                        <a href="{% url 'users:password_reset' %}" class="small">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg auth-button">Ingresar</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted small">¿No tienes una cuenta? <a href="{% url 'users:registro' %}">Regístrate aquí</a></p>
                 </div>
-            </div>
-            <div class="text-center mt-3">
-                <p class="text-muted">¿No tienes una cuenta? <a href="{% url 'users:registro' %}">Regístrate aquí</a>
-                </p>
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{% static 'users/js/auth.js' %}"></script>
+{% endblock extra_js %}
