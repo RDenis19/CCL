@@ -1,26 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
+<div class="dashboard-background-gold">
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-9">
-                <div class="card shadow-sm">
+                <div class="card dashboard-card border-gold shadow-sm">
                     <div class="card-header">
-                        <h4 class="mb-0">{{ page_title }}</h4>
+                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>{{ page_title }}</h5>
                     </div>
-                    <div class="card-body">
-                        <form method="post">
+                    <div class="card-body p-4">
+                        <form method="post" novalidate>
                             {% csrf_token %}
-                            {{ form.as_p }}
-                            <hr>
-                            <button type="submit" class="btn btn-success">Guardar Noticia</button>
-                            <a href="{% url 'staff_panel:noticia-list' %}" class="btn btn-secondary">Cancelar</a>
+
+                            {% for field in form %}
+                                <div class="mb-3 form-field-group">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'staff_panel:noticia-list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-gold">Guardar Noticia</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}

@@ -1,50 +1,71 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
+<div class="dashboard-background-gold">
     <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-            <h1 class="h2">{{ page_title }}</h1>
-            <a href="{% url 'staff_panel:noticia-create' %}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Crear Nueva Noticia
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="display-6 m-0">{{ page_title }}</h1>
+            <a href="{% url 'staff_panel:noticia-create' %}" class="btn btn-outline-gold">
+                <i class="bi bi-plus-circle me-2"></i>Crear Nueva Noticia
             </a>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <div class="card dashboard-card border-gold shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Listado de Noticias</h5>
+            </div>
+            <div class="card-body p-0"> {# Eliminamos el padding para que la tabla ocupe todo el espacio #}
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                         <tr>
-                            <th>Título</th>
-                            <th>Categoría</th>
-                            <th>Autor</th>
-                            <th>Estado</th>
-                            <th>Publicación</th>
-                            <th>Acciones</th>
+                            <th class="py-3 px-4 text-start">Título</th>
+                            <th class="text-center">Categoría</th>
+                            <th class="text-center">Autor</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Publicación</th>
+                            <th class="text-center px-4">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for noticia in noticias %}
                             <tr>
-                                <td>{{ noticia.titulo }}</td>
-                                <td>{{ noticia.categoria.nombre }}</td>
-                                <td>{{ noticia.autor.username }}</td>
-                                <td>
-                  <span class="badge {% if noticia.estado == 'PUBLICADA' %}bg-success{% else %}bg-secondary{% endif %}">
-                    {{ noticia.get_estado_display }}
-                  </span>
+                                <td class="px-4 text-start">
+                                    <strong>{{ noticia.titulo }}</strong>
                                 </td>
-                                <td>{{ noticia.fecha_publicacion|default:"-" }}</td>
-                                <td>
-                                    <a href="{% url 'staff_panel:noticia-update' pk=noticia.pk %}"
-                                       class="btn btn-sm btn-warning">Editar</a>
+                                <td class="text-center">
+                                    <span class="text-muted">{{ noticia.categoria.nombre }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-muted">{{ noticia.autor.username }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge {% if noticia.estado == 'PUBLICADA' %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {{ noticia.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-muted">{{ noticia.fecha_publicacion|date:"d M, Y"|default:"-" }}</span>
+                                </td>
+                                <td class="text-center px-4">
+                                    <a href="{% url 'staff_panel:noticia-update' pk=noticia.pk %}" class="btn btn-sm btn-edit-icon" title="Editar Noticia">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="6" class="text-center">No hay noticias creadas.</td>
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <p class="mb-1 fs-5">No hay noticias creadas.</p>
+                                    <p>¡Haz clic en "Crear Nueva Noticia" para empezar!</p>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -53,4 +74,9 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}

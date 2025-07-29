@@ -1,37 +1,67 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
+<div class="dashboard-background-gold">
     <div class="container py-4">
-        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="display-6 m-0">{{ page_title }}</h1>
+        </div>
+
+        <div class="card dashboard-card border-gold shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Listado de Solicitudes de Servicio</h5>
+            </div>
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                         <tr>
-                            <th>Recurso Solicitado</th>
-                            <th>Socio</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th class="py-3 px-4 text-start">Recurso Solicitado</th>
+                            <th class="text-center">Socio</th>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center px-4">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for solicitud in solicitudes %}
                             <tr>
-                                <td>{{ solicitud.recurso.nombre }}</td>
-                                <td>{{ solicitud.solicitante.username }}</td>
-                                <td>{{ solicitud.fecha_creacion|date:"d M, Y" }}</td>
-                                <td><span class="badge bg-warning text-dark">{{ solicitud.get_estado_display }}</span>
+                                <td class="px-4 text-start">
+                                    <strong>{{ solicitud.recurso.nombre }}</strong>
                                 </td>
-                                <td><a href="{% url 'staff_panel:solicitud-servicio-manage' pk=solicitud.pk %}"
-                                       class="btn btn-sm btn-info">Gestionar</a></td>
+                                <td class="text-center">
+                                    <span class="text-muted">{{ solicitud.solicitante.username }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-muted">{{ solicitud.fecha_creacion|date:"d M, Y" }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge
+                                        {% if solicitud.estado == 'APROBADA' %}bg-success
+                                        {% elif solicitud.estado == 'PENDIENTE' %}bg-warning text-dark
+                                        {% elif solicitud.estado == 'RECHAZADA' %}bg-danger
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ solicitud.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td class="text-center px-4">
+                                    <a href="{% url 'staff_panel:solicitud-servicio-manage' pk=solicitud.pk %}" class="btn btn-sm btn-outline-gold">
+                                        Gestionar
+                                    </a>
+                                </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">No hay solicitudes pendientes.</td>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    <p class="mb-1 fs-5">No hay solicitudes de servicio pendientes.</p>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -40,4 +70,9 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}

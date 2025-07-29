@@ -1,45 +1,67 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
 {% block content %}
+<div class="dashboard-background-gold">
     <div class="container py-4">
-        <h1 class="display-6 border-bottom pb-3 mb-4">{{ page_title }}</h1>
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-header"><h5 class="mb-0">Detalles de la Solicitud</h5></div>
-                    <div class="card-body">
-                        <p><strong>Socio:</strong> {{ solicitud.solicitante.get_full_name }}
-                            ({{ solicitud.solicitante.username }})</p>
-                        <p><strong>Recurso:</strong> {{ solicitud.recurso.nombre }}</p>
+        <h1 class="display-6 border-bottom pb-3 mb-4 text-dark text-center fw-bold">{{ page_title }}</h1>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7">
+                <div class="card dashboard-card border-gold shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Detalles de la Solicitud</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="detail-item"><strong>Socio:</strong> <span>{{ solicitud.solicitante.get_full_name|default:solicitud.solicitante.username }}</span></div>
+                        <div class="detail-item"><strong>Recurso:</strong> <span>{{ solicitud.recurso.nombre }}</span></div>
                         {% if solicitud.horario %}
-                            <p><strong>Horario
-                                Reservado:</strong> {{ solicitud.horario.fecha_hora_inicio|date:"d M, Y, H:i" }}
-                                - {{ solicitud.horario.fecha_hora_fin|time:"H:i" }}</p>
+                            <div class="detail-item"><strong>Horario Reservado:</strong> <span>{{ solicitud.horario.fecha_hora_inicio|date:"d M, Y, H:i" }} - {{ solicitud.horario.fecha_hora_fin|time:"H:i" }}</span></div>
                         {% endif %}
-                        <p><strong>Notas del socio:</strong></p>
-                        <p class="p-3 bg-light rounded"><em>{{ solicitud.notas_usuario|default:"Sin notas." }}</em></p>
+                        <hr>
+                        <p class="mb-2"><strong>Notas del socio:</strong></p>
+                        <div class="p-3 bg-light rounded border">
+                            <em class="text-muted">{{ solicitud.notas_usuario|default:"El socio no dejó notas." }}</em>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="card shadow-sm">
-                    <div class="card-header"><h5 class="mb-0">Acciones</h5></div>
-                    <div class="card-body">
+
+            <div class="col-lg-5">
+                <div class="card dashboard-card border-gold shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Acciones</h5>
+                    </div>
+                    <div class="card-body p-4">
                         <form method="post">
                             {% csrf_token %}
-                            <div class="mb-3">{{ form.respuesta }}</div>
+                            <div class="mb-3 form-field-group">
+                                <label for="{{ form.respuesta.id_for_label }}">Respuesta para el socio (Opcional):</label>
+                                {{ form.respuesta }}
+                            </div>
                             <div class="d-grid gap-2">
-                                <button type="submit" name="action" value="aprobar" class="btn btn-success">Aprobar
-                                </button>
-                                <button type="submit" name="action" value="rechazar" class="btn btn-danger">Rechazar
-                                </button>
+                                <button type="submit" name="action" value="aprobar" class="btn btn-success btn-lg">Aprobar</button>
+                                <button type="submit" name="action" value="rechazar" class="btn btn-danger btn-lg">Rechazar</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'staff_panel:solicitud-servicio-list' %}" class="btn btn-outline-secondary">‹ Volver a la lista</a>
+        </div>
     </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}
