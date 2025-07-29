@@ -2,8 +2,9 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.utils.text import slugify
 
-from content.models import Noticia
+from content.models import Noticia, CategoriaNoticia
 from memberships.models import SolicitudAfiliacion
 from memberships.services import aprobar_solicitud, rechazar_solicitud
 from payments.models import Pago
@@ -157,14 +158,28 @@ def noticia_list_view(request):
 @staff_member_required
 def noticia_create_view(request):
     """
-    Crea una nueva noticia.
+    Crea una nueva noticia. La lógica de validación y creación de categoría
+    ahora está encapsulada en el NoticiaForm.
     """
     if request.method == 'POST':
         form = NoticiaForm(request.POST)
         if form.is_valid():
+            nombre_nueva_cat = form.cleaned_data.get('nueva_categoria')
+            categoria = form.cleaned_data.get('categoria')
+
+            # Si se proporcionó una nueva categoría, la creamos.
+            if nombre_nueva_cat:
+                categoria = CategoriaNoticia.objects.create(
+                    nombre=nombre_nueva_cat,
+                    slug=slugify(nombre_nueva_cat)
+                )
+
+            # Procedemos a guardar la noticia
             noticia = form.save(commit=False)
             noticia.autor = request.user
+            noticia.categoria = categoria  # Asignamos la categoría (existente o recién creada)
             noticia.save()
+
             messages.success(request, "La noticia ha sido creada con éxito.")
             return redirect('staff_panel:noticia-list')
     else:

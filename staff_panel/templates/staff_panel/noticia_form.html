@@ -8,48 +8,98 @@
 {% endblock extra_head %}
 
 {% block content %}
-<div class="dashboard-background-gold">
-    <div class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-9">
-                <div class="card dashboard-card border-gold shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>{{ page_title }}</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form method="post" novalidate>
-                            {% csrf_token %}
+    <div class="dashboard-background-gold">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="card dashboard-card border-gold shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>{{ page_title }}</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="post" novalidate>
+                                {% csrf_token %}
 
-                            {% for field in form %}
-                                <div class="mb-3 form-field-group">
-                                    {{ field.label_tag }}
-                                    {{ field }}
-                                    {% if field.help_text %}
-                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {# Muestra errores generales del formulario (los que no son de un campo específico) #}
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in form.non_field_errors %}
+                                            <p class="mb-0">{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="mb-3">
+                                    {{ form.titulo.label_tag }}
+                                    {{ form.titulo }}
+                                    {% for error in form.titulo.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.categoria.label_tag }}
+                                    <div class="input-group">
+                                        {{ form.categoria }}
+                                        <button type="button" id="btn-toggle-new-category"
+                                                class="btn btn-outline-success" title="Añadir nueva categoría">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
+                                    {% for error in form.categoria.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+
+                                <div id="new-category-form-group"
+                                     class="mb-3 p-3 border rounded bg-light d-none anim-fade-in-down">
+                                    {{ form.nueva_categoria.label_tag }}
+                                    {{ form.nueva_categoria }}
+                                    {% if form.nueva_categoria.help_text %}
+                                        <small class="form-text text-muted">{{ form.nueva_categoria.help_text }}</small>
                                     {% endif %}
-                                    {% for error in field.errors %}
-                                        <div class="text-danger small mt-1">
-                                            {{ error }}
-                                        </div>
+                                    {% for error in form.nueva_categoria.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
                                     {% endfor %}
                                 </div>
-                            {% endfor %}
 
-                            <hr class="my-4">
+                                <div class="mb-3">
+                                    {{ form.estado.label_tag }}
+                                    {{ form.estado }}
+                                    {% for error in form.estado.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
 
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{% url 'staff_panel:noticia-list' %}" class="btn btn-outline-secondary">Cancelar</a>
-                                <button type="submit" class="btn btn-gold">Guardar Noticia</button>
-                            </div>
-                        </form>
+                                <div class="mb-3">
+                                    {{ form.contenido.label_tag }}
+                                    {{ form.contenido }}
+                                    {% for error in form.contenido.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.slug.label_tag }}
+                                    {{ form.slug }}
+                                    {% if form.slug.help_text %}
+                                        <small class="form-text text-muted">{{ form.slug.help_text }}</small>{% endif %}
+                                    {% for error in form.slug.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'staff_panel:noticia-list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-gold">Guardar Noticia</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock content %}
 
 {% block extra_js %}
     <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+    <script src="{% static 'staff_panel/js/noticia_form.js' %}"></script>
 {% endblock extra_js %}
