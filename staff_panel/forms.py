@@ -30,11 +30,12 @@ class ServicioForm(forms.ModelForm):
 
     class Meta:
         model = Servicio
-        fields = ['nombre', 'categoria', 'descripcion', 'activo']
+        fields = ['nombre', 'categoria', 'descripcion', 'precio', 'activo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'activo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
