@@ -37,7 +37,8 @@ def servicio_detail_view(request, pk):
 @login_required
 def solicitud_create_view(request, recurso_pk, horario_pk=None):
     """
-    Crea una solicitud para un recurso específico y un horario opcional.
+    Crea una solicitud. Si el servicio es de pago, inicia el flujo
+    de verificación manual sin bloquear el horario.
     """
     recurso = get_object_or_404(RecursoServicio, pk=recurso_pk)
     horario = None
@@ -52,39 +53,47 @@ def solicitud_create_view(request, recurso_pk, horario_pk=None):
     if request.method == 'POST':
         form = SolicitudServicioForm(request.POST)
         if form.is_valid():
-            # Iniciar la creación de la solicitud
             solicitud = form.save(commit=False)
             solicitud.solicitante = request.user
             solicitud.recurso = recurso
 
-            # --- LÓGICA ACTUALIZADA ---
             if horario:
-                # Si es una reserva, copiamos las fechas del horario
                 solicitud.fecha_hora_inicio = horario.fecha_hora_inicio
                 solicitud.fecha_hora_fin = horario.fecha_hora_fin
-
-                # Marcamos el horario como reservado
-                horario.esta_reservado = True
-                horario.save()
             else:
-                # Si es una solicitud simple, las fechas pueden ser nulas o default
-                # (Asegúrate que el modelo permita null=True o tenga un default)
-                # Para este caso, asumimos que no se guardan fechas.
-                # Nota: El modelo actual exige estas fechas, lo mejor es poner un placeholder.
-                now = timezone.now()
-                solicitud.fecha_hora_inicio = now
-                solicitud.fecha_hora_fin = now
+                # El modelo permite null=True, por lo que no es necesario un placeholder
+                pass
 
-            solicitud.save()
-            messages.success(request, _("Tu solicitud ha sido enviada con éxito."))
-            return redirect('users:dashboard')
+            # Primero, verificamos el precio para decidir el flujo
+            if recurso.servicio.precio > 0:
+                # --- FLUJO DE PAGO MANUAL ---
+                solicitud.estado = SolicitudServicio.Estado.PENDIENTE_PAGO
+                solicitud.save()  # Guardamos la solicitud para tener un ID
+
+                # CAMBIO CLAVE: No tocamos el horario aquí. Permanece disponible.
+
+                messages.info(request, _("Tu solicitud ha sido creada. Por favor, sube tu comprobante de pago."))
+                return redirect('payments:upload_comprobante', solicitud_id=solicitud.id)
+
+            else:
+                # --- FLUJO GRATUITO ---
+                solicitud.estado = SolicitudServicio.Estado.PENDIENTE
+                solicitud.save()
+
+                # Aquí sí reservamos el horario inmediatamente porque es gratis.
+                if horario:
+                    horario.esta_reservado = True
+                    horario.save()
+
+                messages.success(request, _("Tu solicitud gratuita ha sido enviada con éxito."))
+                return redirect('users:dashboard')
     else:
         form = SolicitudServicioForm()
 
     context = {
         'form': form,
         'recurso': recurso,
-        'horario': horario,  # Pasamos el horario a la plantilla
+        'horario': horario,
         'page_title': f"Solicitar {recurso.nombre}"
     }
     return render(request, 'services/solicitud_form.html', context)

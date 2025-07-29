@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from content.models import Noticia
 from memberships.models import SolicitudAfiliacion
 from memberships.services import aprobar_solicitud, rechazar_solicitud
+from payments.models import Pago
 from services.forms import RespuestaSolicitudForm
 from services.models import SolicitudServicio, Servicio, RecursoServicio
 from services.services import procesar_solicitud
@@ -24,10 +26,15 @@ def dashboard_staff_view(request):
         estado=SolicitudServicio.Estado.PENDIENTE
     ).count()
 
+    pendientes_pagos = Pago.objects.filter(
+        estado=Pago.EstadoPago.PENDIENTE
+    ).count()
+
     context = {
         'page_title': "Panel de Gestión",
         'pendientes_afiliacion': pendientes_afiliacion,
         'pendientes_servicios': pendientes_servicios,
+        'pendientes_pagos': pendientes_pagos,
     }
     return render(request, 'staff_panel/dashboard.html', context)
 
@@ -261,3 +268,58 @@ def recurso_manage_view(request, pk=None, servicio_pk=None):
         'page_title': "Editar Recurso" if instance else "Añadir Nuevo Recurso"
     }
     return render(request, 'staff_panel/servicio_form.html', context)
+
+
+# Archivo: staff_panel/views.py (añadir al final)
+
+@staff_member_required
+def pago_list_view(request):
+    """
+    Muestra una lista de todos los pagos pendientes de verificación.
+    """
+    pagos_pendientes = Pago.objects.filter(
+        estado=Pago.EstadoPago.PENDIENTE
+    ).select_related(
+        'solicitud_servicio__solicitante', 'solicitud_servicio__recurso'
+    ).order_by('fecha_creacion')
+
+    context = {
+        'page_title': "Verificar Pagos de Servicios",
+        'pagos': pagos_pendientes,
+    }
+    return render(request, 'staff_panel/pago_list.html', context)
+
+
+@staff_member_required
+def pago_manage_view(request, pk):
+    """
+    Muestra el detalle de un pago, incluyendo el comprobante, y permite al
+    staff verificarlo.
+    """
+    pago = get_object_or_404(
+        Pago.objects.select_related(
+            'solicitud_servicio__solicitante',
+            'solicitud_servicio__recurso__servicio'
+        ),
+        pk=pk,
+        estado=Pago.EstadoPago.PENDIENTE
+    )
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'verificar_pago':
+            # La lógica de confirmación se delega a la señal a través del admin action
+            pago.estado = Pago.EstadoPago.VERIFICADO
+            pago.gestor = request.user
+            pago.fecha_verificacion = timezone.now()
+            pago.save(update_fields=['estado', 'gestor', 'fecha_verificacion'])
+
+            messages.success(request,
+                             f"El pago para la solicitud de '{pago.solicitud_servicio.recurso.nombre}' ha sido VERIFICADO.")
+            return redirect('staff_panel:pago-list')
+
+    context = {
+        'page_title': "Verificar Detalle de Pago",
+        'pago': pago,
+    }
+    return render(request, 'staff_panel/pago_manage.html', context)

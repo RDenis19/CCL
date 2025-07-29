@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="display-6 border-bottom pb-3 mb-4 text-dark">{{ page_title }}</h1>
+                <div class="card shadow">
+                    <div class="card-body p-lg-5">
+                        <div class="row g-4">
+                            <div class="col-md-5">
+                                <h5 class="text-primary">Detalles de la Solicitud</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <strong>Solicitante:</strong> {{ pago.solicitud_servicio.solicitante.get_full_name }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Servicio:</strong> {{ pago.solicitud_servicio.recurso.servicio.nombre }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Recurso:</strong> {{ pago.solicitud_servicio.recurso.nombre }}</li>
+                                    <li class="list-group-item"><strong>Horario
+                                        Solicitado:</strong> {{ pago.solicitud_servicio.fecha_hora_inicio|date:"d/m/y H:i" }}
+                                        - {{ pago.solicitud_servicio.fecha_hora_fin|time:"H:i" }}</li>
+                                    <li class="list-group-item"><strong>Monto:</strong> <span
+                                            class="fw-bold text-success">${{ pago.monto|floatformat:2 }}</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="text-primary">Comprobante de Pago</h5>
+                                <a href="{{ pago.comprobante.url }}" target="_blank"
+                                   title="Haz clic para ver la imagen completa">
+                                    <img src="{{ pago.comprobante.url }}" alt="Comprobante de pago"
+                                         class="img-fluid rounded border shadow-sm"
+                                         style="max-height: 400px; object-fit: contain;">
+                                </a>
+                                <div class="text-center mt-2">
+                                    <a href="{{ pago.comprobante.url }}" target="_blank"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-zoom-in"></i> Ver en tamaño completo
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="text-center">
+                            <form method="post">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="verificar_pago"
+                                        class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle-fill me-2"></i> {% trans "Confirmar y Verificar Pago" %}
+                                </button>
+                                <a href="{% url 'staff_panel:pago-list' %}"
+                                   class="btn btn-secondary ms-2">{% trans "Volver a la lista" %}</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

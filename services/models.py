@@ -33,6 +33,12 @@ class Servicio(models.Model):
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
+    precio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Precio del Servicio",
+        default=0.00
+    )
 
     class Meta:
         verbose_name = _("Servicio")
@@ -141,6 +147,8 @@ class SolicitudServicio(models.Model):
 
     class Estado(models.TextChoices):
         PENDIENTE = "PENDIENTE", _("Pendiente de Aprobación")
+        PENDIENTE_PAGO = "PENDIENTE_PAGO", _("Pendiente de Pago")  # <-- NUEVO
+        PENDIENTE_VERIFICACION = "PENDIENTE_VERIFICACION", _("Pendiente de Verificación")  # <-- NUEVO
         CONFIRMADA = "CONFIRMADA", _("Confirmada")
         RECHAZADA = "RECHAZADA", _("Rechazada")
         COMPLETADA = "COMPLETADA", _("Completada")
@@ -153,7 +161,7 @@ class SolicitudServicio(models.Model):
 
     gestor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
                                related_name="solicitudes_gestionadas", limit_choices_to={'is_staff': True})
-    estado = models.CharField(_("Estado"), max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
+    estado = models.CharField(_("Estado"), max_length=30, choices=Estado.choices, default=Estado.PENDIENTE)
     notas_usuario = models.TextField(_("Notas del Usuario"), blank=True)
     respuesta_gestor = models.TextField(_("Respuesta del Gestor"), blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)

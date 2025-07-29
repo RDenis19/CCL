@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'content.apps.ContentConfig',  # App para el sistema de noticias y contenido.
     "communications.apps.CommunicationsConfig",  # App para las notificaciones de usuario.
     'staff_panel.apps.StaffPanelConfig',  # App para el panel de gestión del personal.
+    'payments.apps.PaymentsConfig',  # App para los pagos de los servicios internos.
 ]
 
 MIDDLEWARE = [

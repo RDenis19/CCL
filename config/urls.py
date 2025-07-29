@@ -12,6 +12,7 @@ urlpatterns = [
     path('noticias/', include('content.urls', namespace='content')),
     path('notificaciones/', include('communications.urls', namespace='communications')),
     path('staff/', include('staff_panel.urls', namespace='staff_panel')),
+    path('pagos/', include('payments.urls', namespace='payments')),
 ]
 
 # --- Servir Archivos de Medios en Desarrollo ---

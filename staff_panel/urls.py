@@ -36,4 +36,6 @@ urlpatterns = [
     path('servicios/<int:pk>/recursos/', views.servicio_detail_staff_view, name='servicio-detail-staff'),
     path('servicios/<int:servicio_pk>/recursos/crear/', views.recurso_manage_view, name='recurso-create'),
     path('recursos/<int:pk>/editar/', views.recurso_manage_view, name='recurso-edit'),
+    path('pagos/pendientes/', views.pago_list_view, name='pago-list'),
+    path('pagos/<uuid:pk>/gestionar/', views.pago_manage_view, name='pago-manage'),
 ]

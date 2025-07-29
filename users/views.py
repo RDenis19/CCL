@@ -78,7 +78,7 @@ def registro_view(request):
             # Inicia sesión automáticamente al nuevo usuario
             login(request, new_user)
             messages.success(request, _("¡Registro exitoso! Bienvenido."))
-            return redirect('users:perfil-detail')
+            return redirect('users:dashboard')
     else:
         form = UserRegistrationForm()
 
@@ -97,12 +97,12 @@ def dashboard_view(request):
     notificaciones_no_leidas = request.user.notificaciones.filter(leida=False)[:3]
 
     # --- CONSULTA CORREGIDA ---
-    # Ahora filtramos y ordenamos directamente por los campos del modelo SolicitudServicio.
+    # Filtramos y ordenamos directamente por los campos del modelo SolicitudServicio.
     proximas_reservas = SolicitudServicio.objects.filter(
         solicitante=request.user,
         estado=SolicitudServicio.Estado.CONFIRMADA,
-        fecha_hora_inicio__gte=timezone.now()  # <-- CAMBIO
-    ).order_by('fecha_hora_inicio')[:3]  # <-- CAMBIO
+        fecha_hora_inicio__gte=timezone.now()
+    ).order_by('fecha_hora_inicio')[:3]
 
     solicitud_pendiente = None
     if not hasattr(request.user, 'membresia'):
