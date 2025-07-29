@@ -22,6 +22,7 @@ def servicio_list_view(request):
     return render(request, 'services/servicio_list.html', context)
 
 
+@login_required
 def servicio_detail_view(request, pk):
     """Muestra los detalles de un servicio y sus recursos disponibles."""
     servicio = get_object_or_404(Servicio, pk=pk, activo=True)
@@ -111,6 +112,7 @@ def convenio_list_view(request):
     return render(request, 'services/convenio_list.html', context)
 
 
+@login_required
 def convenio_detail_view(request, pk):
     """
     Muestra los detalles y beneficios de un convenio específico.
