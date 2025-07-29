@@ -6,22 +6,14 @@ from .models import SolicitudAfiliacion
 
 
 @transaction.atomic
-def crear_solicitud_completa(solicitante, form_detalle, formset_beneficiarios=None):
+def crear_solicitud_completa(solicitante, form_detalle, formset_beneficiarios=None, formset_documentos=None):
     """
-    Crea una solicitud de afiliación completa dentro de una transacción.
-
-    Args:
-        solicitante (User): El usuario que realiza la solicitud.
-        form_detalle (ModelForm): El formulario con los detalles (natural o jurídico).
-        formset_beneficiarios (FormSet, optional): El formset con los beneficiarios.
-
-    Returns:
-        SolicitudAfiliacion: La instancia de la solicitud creada.
+    Crea una solicitud de afiliación completa, incluyendo detalles y documentos.
     """
     # 1. Crear la solicitud principal.
     solicitud = SolicitudAfiliacion.objects.create(solicitante=solicitante)
 
-    # 2. Guardar el detalle (sin commit) para obtener una instancia.
+    # 2. Guardar el detalle.
     detalle = form_detalle.save(commit=False)
     detalle.solicitud = solicitud
     detalle.save()
@@ -30,6 +22,16 @@ def crear_solicitud_completa(solicitante, form_detalle, formset_beneficiarios=No
     if formset_beneficiarios:
         formset_beneficiarios.instance = detalle
         formset_beneficiarios.save()
+
+    # --- LÓGICA AÑADIDA PARA GUARDAR DOCUMENTOS ---
+    if formset_documentos:
+        # Vinculamos los documentos con la solicitud principal
+        documentos = formset_documentos.save(commit=False)
+        for documento in documentos:
+            documento.solicitud = solicitud
+            documento.save()
+        # Guardar eliminaciones si las hubiera
+        formset_documentos.save_m2m()
 
     return solicitud
 

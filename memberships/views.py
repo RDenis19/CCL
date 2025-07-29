@@ -1,55 +1,62 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from .forms import (
     DetalleSolicitudNaturalForm,
     DetalleSolicitudJuridicaForm,
-    BeneficiarioPolizaFormSet
+    BeneficiarioPolizaFormSet, DocumentoAdjuntoFormSet
 )
-from .services import crear_solicitud_completa
 from .models import SolicitudAfiliacion
+from .services import crear_solicitud_completa
 
 
 @login_required
 def solicitud_create_view(request, tipo_solicitante):
     """
-    Gestiona la creación de una nueva solicitud de afiliación.
-    El 'tipo_solicitante' viene de la URL ('natural' o 'juridica').
+    Gestiona la creación de una nueva solicitud de afiliación,
+    incluyendo la subida de documentos.
     """
     FormDetalle = DetalleSolicitudNaturalForm if tipo_solicitante == 'natural' else DetalleSolicitudJuridicaForm
     template_name = 'memberships/solicitud_form.html'
 
     if request.method == 'POST':
+        # --- CAMBIO: Es crucial pasar request.FILES al manejar archivos ---
         form_detalle = FormDetalle(request.POST)
+        formset_documentos = DocumentoAdjuntoFormSet(request.POST, request.FILES)
+
         formset_beneficiarios = None
         if tipo_solicitante == 'natural':
             formset_beneficiarios = BeneficiarioPolizaFormSet(request.POST)
 
-        # Validar ambos formularios
+        # Validar todos los formularios
         is_form_valid = form_detalle.is_valid()
+        is_formset_docs_valid = formset_documentos.is_valid()
         is_formset_valid = formset_beneficiarios.is_valid() if formset_beneficiarios else True
 
-        if is_form_valid and is_formset_valid:
+        if is_form_valid and is_formset_valid and is_formset_docs_valid:
             try:
-                crear_solicitud_completa(request.user, form_detalle, formset_beneficiarios)
+                # --- CAMBIO: Pasamos el formset de documentos al servicio ---
+                crear_solicitud_completa(
+                    request.user, form_detalle, formset_beneficiarios, formset_documentos
+                )
                 messages.success(request, _("¡Tu solicitud ha sido enviada con éxito!"))
                 return redirect('memberships:solicitud-detail')
             except Exception as e:
-                # En un caso real, aquí se registraría el error 'e'.
                 messages.error(request, _("Ocurrió un error al procesar tu solicitud."))
         else:
             messages.error(request, _("Por favor, corrige los errores en el formulario."))
 
     else:
         form_detalle = FormDetalle()
+        formset_documentos = DocumentoAdjuntoFormSet()  # <-- Instanciar para el GET
         formset_beneficiarios = BeneficiarioPolizaFormSet() if tipo_solicitante == 'natural' else None
 
     context = {
         'form_detalle': form_detalle,
         'formset_beneficiarios': formset_beneficiarios,
+        'formset_documentos': formset_documentos,  # <-- PASAR AL CONTEXTO
         'page_title': _("Solicitud de Afiliación - Persona ") + _(tipo_solicitante.capitalize())
     }
     return render(request, template_name, context)
