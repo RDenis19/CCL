@@ -86,13 +86,29 @@ def solicitud_detail_view(request):
 def solicitud_selector_view(request):
     """
     Muestra una página para que el usuario elija qué tipo de
-    solicitud de afiliación desea iniciar.
+    solicitud de afiliación desea iniciar, con validaciones corregidas.
     """
-    # Si el usuario ya tiene una solicitud o membresía, lo redirigimos a su panel.
-    if hasattr(request.user, 'membresia') or request.user.solicitudes_afiliacion.exists():
-        messages.info(request, _("Ya tienes una membresía o una solicitud en proceso."))
+    # 1. El usuario es parte del personal, no puede postular.
+    if request.user.is_staff:
+        messages.error(request, _("El personal de la organización no puede iniciar una solicitud de afiliación."))
+        return redirect('staff_panel:dashboard')
+
+    # 2. El usuario ya es un miembro activo.
+    if hasattr(request.user, 'membresia'):
+        messages.info(request, _("Ya tienes una membresía activa."))
         return redirect('users:dashboard')
 
+    # 3. El usuario tiene una solicitud que aún está "en proceso".
+    # Buscamos explícitamente si existe una solicitud pendiente o en revisión.
+    estados_en_proceso = [
+        SolicitudAfiliacion.Estado.PENDIENTE,
+        SolicitudAfiliacion.Estado.EN_REVISION
+    ]
+    if request.user.solicitudes_afiliacion.filter(estado__in=estados_en_proceso).exists():
+        messages.warning(request, _("Ya tienes una solicitud en proceso. Por favor, espera a que sea revisada."))
+        return redirect('users:dashboard')
+
+    # 4. Si ninguna de las condiciones anteriores se cumple, se permite crear una nueva solicitud.
     context = {
         'page_title': _("Iniciar Proceso de Afiliación")
     }

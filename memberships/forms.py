@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from .models import DetalleSolicitudNatural, DetalleSolicitudJuridica, BeneficiarioPoliza, DocumentoAdjunto, \
     SolicitudAfiliacion
@@ -9,8 +10,34 @@ class DetalleSolicitudNaturalForm(forms.ModelForm):
 
     class Meta:
         model = DetalleSolicitudNatural
-        # Excluimos la solicitud porque se asignará automáticamente en la vista.
-        exclude = ('solicitud',)
+        fields = ['cedula', 'direccion', 'celular']
+
+    # --- MeTODO AÑADIDO ---
+    def clean_cedula(self):
+        """
+        Vlida que la cédula no pertenezca a una membresía activa
+        o a una solicitud en proceso.
+        """
+        cedula = self.cleaned_data.get('cedula')
+
+        # Definimos los estados que consideramos "activos" o "en proceso"
+        estados_activos = [
+            SolicitudAfiliacion.Estado.PENDIENTE,
+            SolicitudAfiliacion.Estado.EN_REVISION,
+            SolicitudAfiliacion.Estado.APROBADA,
+        ]
+
+        # Buscamos si existe algún detalle con esta cédula cuya solicitud
+        # esté en uno de los estados activos.
+        if DetalleSolicitudNatural.objects.filter(
+                cedula=cedula,
+                solicitud__estado__in=estados_activos
+        ).exists():
+            raise forms.ValidationError(
+                _("Ya existe una solicitud activa o en proceso con este número de cédula.")
+            )
+
+        return cedula
 
 
 class DetalleSolicitudJuridicaForm(forms.ModelForm):

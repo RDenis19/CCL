@@ -41,9 +41,7 @@ class DetalleSolicitudNatural(models.Model):
     Detalles específicos para una solicitud de Persona Natural.
     """
     solicitud = models.OneToOneField(SolicitudAfiliacion, on_delete=models.CASCADE, primary_key=True)
-    nombres = models.CharField(_("Nombres"), max_length=150)
-    apellidos = models.CharField(_("Apellidos"), max_length=150)
-    cedula = models.CharField(_("Cédula"), max_length=10, unique=True)
+    cedula = models.CharField(_("Cédula"), max_length=10)
     direccion = models.CharField(_("Dirección Principal"), max_length=255)
     celular = models.CharField(_("Celular"), max_length=20)
 
