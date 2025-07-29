@@ -68,7 +68,8 @@ def solicitud_afiliacion_manage_view(request, pk):
     solicitud = get_object_or_404(
         SolicitudAfiliacion.objects.select_related(
             'solicitante', 'detallesolicitudnatural', 'detallesolicitudjuridica'
-        ), pk=pk
+        ).prefetch_related('documentos'),
+        pk=pk
     )
 
     if request.method == 'POST':
