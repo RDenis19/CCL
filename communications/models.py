@@ -39,9 +39,15 @@ class Notificacion(models.Model):
     verbo = models.CharField(_("Verbo"), max_length=255)
 
     # Campos para la Clave Foránea Genérica
+        # --- CÓDIGO CORREGIDO ---
+    # Campos para la Clave Foránea Genérica
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
+    
+    # CAMBIO: Cambiamos el tipo de campo para que acepte UUIDs como texto
+    object_id = models.CharField(max_length=255, null=True, blank=True)
+    
     objetivo = GenericForeignKey('content_type', 'object_id')
+    # --- FIN DEL CÓDIGO CORREGIDO ---
 
     leida = models.BooleanField(_("¿Leída?"), default=False, db_index=True)
     timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
