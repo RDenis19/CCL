@@ -18,8 +18,7 @@ class CategoriaNoticiaAdmin(admin.ModelAdmin):
 class ComentarioNoticiaInline(admin.TabularInline):
     """
     Permite ver y gestionar los comentarios directamente desde la página
-    de edición de una Noticia. 'TabularInline' los muestra en un formato
-    de tabla compacto.
+    de edición de una Noticia.
     """
     model = ComentarioNoticia
     extra = 0

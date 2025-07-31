@@ -15,7 +15,9 @@ urlpatterns = [
     path('pagos/', include('payments.urls', namespace='payments')),
 ]
 
-# --- Servir Archivos de Medios en Desarrollo ---
+# Este bloque solo se ejecuta si la variable DEBUG en settings.py es True.
+# Permite que el servidor de desarrollo de Django sirva los archivos subidos por los usuarios (media)
+# y los archivos estáticos (CSS, JS, imágenes).
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

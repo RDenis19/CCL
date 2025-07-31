@@ -12,7 +12,6 @@ class DetalleSolicitudNaturalForm(forms.ModelForm):
         model = DetalleSolicitudNatural
         fields = ['cedula', 'direccion', 'celular']
 
-    # --- MeTODO AÑADIDO ---
     def clean_cedula(self):
         """
         Vlida que la cédula no pertenezca a una membresía activa

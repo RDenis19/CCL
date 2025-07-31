@@ -31,13 +31,11 @@
                     </header>
 
                     {% if noticia.imagen %}
-                    <!-- 1. Imagen principal con animación de entrada -->
                     <figure class="mb-4 animar-entrada" data-delay="100">
                         <img class="img-fluid rounded-3 shadow-lg" src="{{ noticia.imagen.url }}" alt="{{ noticia.titulo }}">
                     </figure>
                     {% endif %}
                     
-                    <!-- 2. Contenido del artículo con animación de entrada -->
                     <section class="mb-5 post-content animar-entrada" data-delay="200">
                         {{ noticia.contenido|linebreaks }}
                     </section>
@@ -46,12 +44,11 @@
 
                 <hr class="my-5">
 
-                <!-- SECCIÓN DE COMENTARIOS REDISEÑADA -->
                 <section class="comments-section animar-entrada" data-delay="300">
                     <h3 class="mb-4">Comentarios ({{ comentarios.count }})</h3>
                     
                     {% if user.is_authenticated %}
-                        <!-- Formulario para nuevo comentario -->
+                        <!-- Formulario para un nuevo comentario -->
                         <div class="card mb-5 shadow-sm new-comment-card">
                             <div class="card-body">
                                 <div class="d-flex align-items-start">

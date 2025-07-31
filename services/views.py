@@ -1,5 +1,3 @@
-# Archivo: services/views.py
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -67,7 +65,7 @@ def solicitud_create_view(request, recurso_pk, horario_pk=None):
 
             # Primero, verificamos el precio para decidir el flujo
             if recurso.servicio.precio > 0:
-                # --- FLUJO DE PAGO MANUAL ---
+
                 solicitud.estado = SolicitudServicio.Estado.PENDIENTE_PAGO
                 solicitud.save()  # Guardamos la solicitud para tener un ID
 
