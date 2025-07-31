@@ -1,0 +1,108 @@
+/* --- ESTILOS PARA LA PÁGINA DE CONTACTO (VERSIÓN CORREGIDA) --- */
+
+/* 1. Keyframes para la animación del fondo degradado */
+@keyframes animated-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 2. Cabecera de la página con el nuevo fondo */
+.hero-contacto {
+    padding: 6rem 0;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    
+    /* CORRECCIÓN: Usamos las variables de color correctas que ya existen */
+    background: linear-gradient(45deg, var(--ccl-azul-principal), var(--ccl-azul-acento), var(--ccl-dorado));
+    background-size: 400% 400%;
+    animation: animated-gradient 15s ease infinite;
+}
+
+/* 3. Capa de patrón geométrico sutil y animado */
+.hero-contacto::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+                      linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%);
+    background-size: 50px 50px;
+    animation: move-pattern 30s linear infinite;
+    z-index: 0;
+}
+
+@keyframes move-pattern {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+}
+
+/* 4. Aseguramos que el texto esté por encima del fondo */
+.hero-contacto .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- (El resto de tus estilos para .contact-info-card, .contact-form-section, etc. van aquí sin cambios) --- */
+/* ... Pega el resto de tus estilos de la página de contacto a partir de aquí ... */
+
+.contact-info-card {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+.contact-info-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+.contact-icon {
+    font-size: 3rem;
+    color: var(--ccl-accent);
+    margin-bottom: 1.5rem;
+}
+.contact-info-card h5 {
+    font-weight: 700;
+    color: var(--ccl-primary);
+}
+.contact-info-card p, .contact-info-card a {
+    color: var(--ccl-text-muted);
+    text-decoration: none;
+}
+.contact-info-card a:hover {
+    color: var(--ccl-accent);
+}
+.contact-form-section {
+    padding: 4rem;
+    background-color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.form-control-custom {
+    background-color: var(--ccl-light-bg);
+    border: 1px solid var(--ccl-border-color);
+    padding: 0.8rem 1rem;
+    border-radius: 0.5rem;
+}
+.form-control-custom:focus {
+    background-color: #fff;
+    border-color: var(--ccl-accent);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.map-container {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    height: 450px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.map-container iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+}

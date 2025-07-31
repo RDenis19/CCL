@@ -1,0 +1,15 @@
+# Archivo: payments/apps.py
+from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
+
+
+class PaymentsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'payments'
+    verbose_name = _("Gestión de Pagos")
+
+    def ready(self):
+        try:
+            import payments.signals
+        except ImportError:
+            pass

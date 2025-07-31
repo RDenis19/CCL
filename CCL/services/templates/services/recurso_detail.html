@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    {# Enlazamos las hojas de estilo de FullCalendar y la nuestra #}
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="{% static 'services/css/servicios_custom.css' %}">
+    <link rel="stylesheet" href="{% static 'services/css/recurso_detail.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+
+    <section class="service-detail-hero text-white">
+        <div class="container anim-fade-in-down">
+            <div class="d-flex justify-content-between align-items-center">
+                 <div>
+                    <h1 class="display-6">{{ page_title }}</h1>
+                    {% if user.is_staff %}
+                        <p class="lead mb-0">Haz clic o arrastra sobre el calendario para crear un nuevo bloque de disponibilidad.</p>
+                    {% else %}
+                        <p class="lead mb-0">Haz clic en un bloque verde "Disponible" para iniciar tu reserva.</p>
+                    {% endif %}
+                 </div>
+                <a href="{% url 'services:servicio-detail' pk=recurso.servicio.pk %}" class="btn btn-outline-light">‹ Volver al Servicio</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container py-5">
+        <div class="card shadow-sm calendar-card anim-fade-in-up">
+            <div class="card-body">
+                <div id="calendar" 
+                     data-is-staff="{{ user.is_staff|yesno:'true,false' }}"
+                     data-events-url="{% url 'services:recurso-eventos-json' pk=recurso.pk %}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_staff %}
+        <div class="modal fade" id="addHorarioModal" tabindex="-1" aria-labelledby="addHorarioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addHorarioModalLabel">Añadir Nuevo Horario Disponible</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="horarioForm" method="post" action="{% url 'services:recurso-detail' pk=recurso.pk %}">
+                            {% csrf_token %}
+                            {{ form_horario.as_p }}
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Guardar Horario</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+    {# Enlazamos las librerías de FullCalendar y nuestro nuevo script #}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+    <script src="{% static 'services/js/recurso_detail.js' %}"></script>
+{% endblock extra_js %}

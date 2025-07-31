@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Noticias - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    {# La ruta ya es correcta, enlazando al CSS de esta app #}
+    <link rel="stylesheet" href="{% static 'content/css/noticias_list.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+
+    <section class="hero-noticias">
+        <div class="hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center text-white">
+                    
+                    <h1 class="display-3 fw-bolder hero-title-glitch" data-text="Nuestro Blog">Ultimas Noticias</h1>
+                    
+                    <p class="lead mt-3 animar-entrada" data-delay="100">
+                        Mantente al día con las últimas Noticias, Eventos y Comunicados de la Cámara de Comercio de Loja.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-content py-5">
+        <div class="container">
+            <div class="row g-5">
+
+                <div class="col-lg-8">
+                    {% for noticia in noticias %}
+                        <article class="blog-post animar-entrada" data-delay="{{ forloop.counter|add:'1' }}00">
+                            {% if noticia.imagen %}
+                                <a href="{{ noticia.get_absolute_url }}" class="blog-post-img-link">
+                                    <img src="{{ noticia.imagen.url }}" class="blog-post-img" alt="{{ noticia.titulo }}">
+                                </a>
+                            {% endif %}
+                            <div class="blog-post-body">
+                                <div class="post-category mb-2">
+                                    <span class="badge bg-primary fw-normal fs-6">{{ noticia.categoria.nombre }}</span>
+                                </div>
+                                <h2 class="blog-post-title">
+                                    <a href="{{ noticia.get_absolute_url }}">{{ noticia.titulo }}</a>
+                                </h2>
+                                <div class="post-meta">
+                                    <span class="post-meta-item"><i class="bi bi-person-fill"></i> {{ noticia.autor.get_full_name|default:noticia.autor.username }}</span>
+                                    <span class="post-meta-item"><i class="bi bi-calendar3"></i> {{ noticia.fecha_publicacion|date:"d \d\e F, Y" }}</span>
+                                </div>
+                                <p class="card-text">{{ noticia.contenido|striptags|truncatewords:40 }}</p>
+                                <a href="{{ noticia.get_absolute_url }}" class="btn-read-more">
+                                    Leer más <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="alert alert-light border-0 text-center py-5">
+                            <h4 class="alert-heading">No hay noticias todavía</h4>
+                            <p class="mb-0">Estamos trabajando en nuevo contenido. ¡Vuelve pronto!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <aside class="col-lg-4">
+                    <div class="sidebar position-sticky" style="top: 2rem;">
+                        
+                        <div class="sidebar-widget p-4 mb-4 animar-entrada" data-delay="300">
+                            <h4 class="sidebar-title">Acerca del Blog</h4>
+                            <p class="mb-0 small">Este es nuestro canal oficial para comunicar eventos, noticias importantes y beneficios para nuestros socios.</p>
+                        </div>
+
+                        <div class="sidebar-widget p-4 mb-4 animar-entrada" data-delay="400">
+                            <h4 class="sidebar-title">Categorías</h4>
+                            <ul class="sidebar-list">
+                                <li><a href="#"><span>Comunicados</span> <span class="badge rounded-pill bg-secondary">8</span></a></li>
+                                <li><a href="#"><span>Eventos</span> <span class="badge rounded-pill bg-secondary">12</span></a></li>
+                                <li><a href="#"><span>Beneficios para Socios</span> <span class="badge rounded-pill bg-secondary">5</span></a></li>
+                                <li><a href="#"><span>Opinión</span> <span class="badge rounded-pill bg-secondary">3</span></a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="sidebar-widget p-4 animar-entrada" data-delay="500">
+                            <h4 class="sidebar-title">Artículos Populares</h4>
+                            <ul class="sidebar-list-posts">
+                                <li class="d-flex align-items-center mb-3">
+                                    <img src="{% static 'img/news-1.jpg' %}" alt="Post thumbnail">
+                                    <div class="ms-3">
+                                        <a href="#" class="post-title">Nuevo Convenio con Aerolíneas Nacionales</a>
+                                        <div class="post-date">Julio 20, 2025</div>
+                                    </div>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <img src="{% static 'img/news-2.jpg' %}" alt="Post thumbnail">
+                                    <div class="ms-3">
+                                        <a href="#" class="post-title">Resultados Exitosos de la Asamblea General</a>
+                                        <div class="post-date">Julio 15, 2025</div>
+                                    </div>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <img src="{% static 'img/news-3.png' %}" alt="Post thumbnail">
+                                    <div class="ms-3">
+                                        <a href="#" class="post-title">Próximo Taller Gratuito de Marketing Digital</a>
+                                        <div class="post-date">Julio 10, 2025</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'content/js/noticias_list.js' %}"></script>
+{% endblock extra_js %}

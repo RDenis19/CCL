@@ -1,0 +1,90 @@
+:root {
+  --ccl-azul-principal: #153D6C;
+  --ccl-azul-acento: #0367EC;
+  --ccl-dorado: #B48314;
+  --ccl-amarillo-claro: #F1DB62;
+  --ccl-light-gray-bg: #f4f7fa;
+  --ccl-card-border: #e9ecef;
+}
+
+body {
+    background-color: var(--ccl-light-gray-bg);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* === ANIMACIONES === */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUpLeft {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === TITULO Y DESCRIPCIÓN === */
+
+h1.display-6 {
+    animation: fadeInDown 1s ease-out;
+    color: var(--ccl-azul-principal);
+    font-weight: 700;
+}
+
+p.lead {
+    animation: fadeInDown 1.4s ease-out;
+}
+
+/* === TARJETAS === */
+
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transform: translateY(40px);
+    opacity: 0;
+    animation: fadeInUpLeft 1s ease-out forwards;
+}
+
+.card:nth-child(1) {
+    animation-delay: 1.8s;
+}
+.card:nth-child(2) {
+    animation-delay: 2.2s;
+}
+
+/* === BOTÓN === */
+
+.btn-primary {
+    background-color: var(--ccl-azul-acento);
+    border-color: var(--ccl-azul-acento);
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--ccl-dorado);
+    border-color: var(--ccl-dorado);
+    transform: scale(1.05);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}

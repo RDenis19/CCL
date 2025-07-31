@@ -1,0 +1,181 @@
+{% load static %}
+{% load notification_tags %}
+
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'bootstrap-5.0.2-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link href="{% static 'img/favicon.png' %}" rel="icon" type="image/png"/>
+
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
+    {% block extra_head %}{% endblock extra_head %}
+
+    <title>{% block title %}Cámara de Comercio de Loja{% endblock title %}</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div id="preloader">
+        <img src="{% static 'img/CCL_Logo2.jpg' %}" alt="Cargando...">
+    </div>
+
+    <nav id="navbar-main" class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand me-lg-5" href="{% if user.is_authenticated %}{% url 'users:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">
+                <img src="{% static 'img/CCL_Logo.png' %}" alt="Logo Cámara de Comercio de Loja" class="logo-dark">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar"
+                    aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="main-navbar">
+                <ul class="navbar-nav navbar-nav-hover align-items-lg-center mx-auto mb-2 mb-lg-0 gap-2">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.resolver_match.url_name == 'servicio-list' %}active{% endif %}" 
+                        href="{% url 'services:servicio-list' %}">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.resolver_match.view_name == 'core:nosotros' %}active{% endif %}" 
+                        href="{% url 'core:nosotros' %}">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.resolver_match.url_name == 'noticia-list' %}active{% endif %}" 
+                        href="{% url 'content:noticia-list' %}">Noticias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.resolver_match.url_name == 'convenio-list' %}active{% endif %}" 
+                        href="{% url 'services:convenio-list' %}">Convenios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.resolver_match.view_name == 'core:contacto' %}active{% endif %}" 
+                        href="{% url 'core:contacto' %}">Contacto</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-lg-center ms-lg-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.get_full_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'users:perfil-detail' %}">Mi Perfil</a></li>
+                                <li>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center"
+                                    href="{% url 'communications:notificacion-list' %}">
+                                        Notificaciones
+                                        <span class="badge bg-danger rounded-pill">{% unread_notifications_count user %}</span>
+                                    </a>
+                                </li>
+                                {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'staff_panel:dashboard' %}">Panel de Gestión</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'users:password_change' %}">Cambiar Contraseña</a></li>
+                                <li>
+                                    <form action="{% url 'users:logout' %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">Cerrar Sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item d-none d-lg-block ms-lg-2">
+                            <a href="{% url 'users:registro' %}" class="btn btn-warning btn-sm btn-animated">
+                                <span class="nav-link-inner--text">Registrate</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'users:login' %}" class="btn btn-primary btn-sm ms-2 btn-animated">
+                                <span class="nav-link-inner--text">Ingresar</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow-1">
+        {# ELIMINAMOS el <div class="container my-4"> de aquí para dar más flexibilidad #}
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <footer class="footer footer-custom-bg text-white pt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <a class="footer-brand" href="{% if user.is_authenticated %}{% url 'users:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">
+                        <img src="{% static 'img/CCL_Logo2.jpg' %}" width="140" alt="CCL Logo Blanco">
+                    </a>
+                    <p class="text-white-50 mt-3 pe-lg-4">
+                        Liderando el desarrollo empresarial en la región sur del Ecuador desde 1973.
+                    </p>
+                    <div class="mt-4">
+                        <h6 class="text-white">Síguenos en redes</h6>
+                        <a href="#" class="btn btn-outline-light btn-icon-only rounded-circle me-2" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-icon-only rounded-circle me-2" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-icon-only rounded-circle" title="Twitter"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6 mb-4 mb-lg-0">
+                    <h6 class="text-white text-uppercase">Institución</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50 text-decoration-none">Nosotros</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Socios</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Transparencia</a></li>
+                        <li><a href="{% url 'core:contacto' %}" class="text-white-50 text-decoration-none">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-6 mb-4 mb-lg-0">
+                    <h6 class="text-white text-uppercase">Servicios</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50 text-decoration-none">Asesoría Legal</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Capacitación</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Arbitraje</a></li>
+                        <li><a href="{% url 'services:servicio-list' %}" class="text-white-50 text-decoration-none">Ver todos</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-white text-uppercase">Contacto</h6>
+                    <ul class="list-unstyled">
+                        <li class="text-white-50 mb-2"><i class="bi bi-geo-alt-fill me-2"></i>Rocafuerte y Bolívar 153-37</li>
+                        <li class="text-white-50 mb-2"><i class="bi bi-telephone-fill me-2"></i>(07) 257 1389</li>
+                        <li class="text-white-50"><i class="bi bi-envelope-fill me-2"></i>info@camaradecomercioloja.org</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1)"/>
+            <div class="row align-items-center justify-content-center pb-4">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0 text-white-50">
+                        © {% now "Y" %} Cámara de Comercio de Loja. Todos los derechos reservados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

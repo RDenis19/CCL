@@ -1,0 +1,93 @@
+/* === Fondo animado: Gotas de lluvia con ondas en el agua === */
+.animated-rain-bg {
+    position: relative;
+    min-height: 100vh;
+    background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+}
+
+.raindrop {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    animation: ripple 4s infinite ease-out;
+    opacity: 0;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(6);
+        opacity: 0;
+    }
+}
+
+
+/* === Estilo de campos del formulario === */
+.card-body form {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.card-body h5 {
+    color: var(--ccl-azul-principal);
+    margin-bottom: 1rem;
+    border-left: 5px solid var(--ccl-dorado);
+    padding-left: 1rem;
+    font-weight: 600;
+}
+
+/* Inputs y selects */
+.card-body .form-label {
+    font-weight: 600;
+    color: var(--ccl-azul-principal);
+}
+
+.card-body input,
+.card-body select,
+.card-body textarea {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-body input:focus,
+.card-body select:focus,
+.card-body textarea:focus {
+    border-color: var(--ccl-azul-acento);
+    box-shadow: 0 0 0 0.2rem rgba(3, 103, 236, 0.25);
+    outline: none;
+}
+
+/* Ayuda y errores */
+.card-body .form-text {
+    font-size: 0.85rem;
+    color: var(--ccl-azul-principal);
+}
+
+.card-body .invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85rem;
+}
+
+/* Botón de envío */
+.card-body button[type="submit"] {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    background-color: var(--ccl-azul-acento);
+    border-color: var(--ccl-azul-acento);
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.card-body button[type="submit"]:hover {
+    background-color: var(--ccl-dorado);
+    border-color: var(--ccl-dorado);
+    transform: scale(1.02);
+    color: white;
+}

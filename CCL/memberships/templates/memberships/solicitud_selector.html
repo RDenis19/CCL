@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'memberships/css/solicitud_selector.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+    <div class="container py-5 text-center">
+        <h1 class="display-6">{{ page_title }}</h1>
+        <p class="lead text-muted mb-5">Elige el tipo de membresía que deseas solicitar.</p>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-5">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <h4 class="card-title">Persona Natural</h4>
+                        <p class="card-text text-muted">Para profesionales independientes, emprendedores o personas sin
+                            una empresa constituida.</p>
+                        <a href="{% url 'memberships:solicitud-create' tipo_solicitante='natural' %}"
+                           class="btn btn-primary mt-3">
+                            Iniciar como Persona Natural
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <h4 class="card-title">Persona Jurídica</h4>
+                        <p class="card-text text-muted">Para empresas legalmente constituidas (S.A., Cía. Ltda.,
+                            etc.).</p>
+                        <a href="{% url 'memberships:solicitud-create' tipo_solicitante='juridica' %}"
+                           class="btn btn-primary mt-3">
+                            Iniciar como Persona Jurídica
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block extra_js %}
+    <script src="{% static 'memberships/js/solicitud_selector.js' %}"></script>
+{% endblock extra_js %}

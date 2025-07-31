@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card shadow-lg border-0 anim-fade-in-up">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <i class="bi bi-cloud-upload fs-1"></i>
+                        <h4 class="mb-0 mt-2">{{ page_title }}</h4>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+
+                        <div class="alert alert-light border-dark border-2 border-dashed">
+                            <h5 class="alert-heading fw-bold">{% trans "Detalles de la Reserva" %}</h5>
+                            <p class="mb-1">
+                                {% trans "Estás a punto de pagar por el recurso:" %}
+                                <strong>{{ solicitud.recurso.nombre }}</strong>.
+                            </p>
+                            <p class="mb-1">
+                                {% trans "Servicio:" %} <strong>{{ solicitud.recurso.servicio.nombre }}</strong>.
+                            </p>
+                            <p class="mb-0">
+                                {% trans "Monto a pagar:" %} <strong
+                                    class="fs-5 text-success">${{ solicitud.recurso.servicio.precio|floatformat:2 }}</strong>.
+                            </p>
+                        </div>
+
+                        <div class="text-center my-4">
+                            <p class="lead">{% trans "Por favor, realiza el pago a nuestra cuenta y sube una foto o PDF del comprobante aquí." %}</p>
+                            {# Aquí puedes añadir los datos de la cuenta bancaria #}
+                            <div class="well">
+                                <p><strong>Razón Social:</strong> Tu Empresa S.A.<br>
+                                    <strong>Banco:</strong> Banco de Loja<br>
+                                    <strong>Cuenta Corriente:</strong> 1234567890<br>
+                                    <strong>RUC:</strong> 1100000000001<br>
+                                    <strong>Email:</strong> pagos@tuempresa.com
+                                </p>
+                            </div>
+                        </div>
+
+                        {# El atributo enctype es CRUCIAL para la subida de archivos #}
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="{{ form.comprobante.id_for_label }}" class="form-label">
+                                    <strong>{% trans "Selecciona tu comprobante" %}</strong>
+                                </label>
+                                {{ form.comprobante }}
+                                {% if form.comprobante.help_text %}
+                                    <small class="form-text text-muted">{{ form.comprobante.help_text }}</small>
+                                {% endif %}
+                                {% for error in form.comprobante.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>{% trans "Finalizar y Enviar Comprobante" %}
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

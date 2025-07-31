@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+    <div class="dashboard-background-gold">
+        <div class="container py-4">
+            <h1 class="display-6 border-bottom pb-3 mb-4 text-dark text-center fw-bold">{{ page_title }}</h1>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card dashboard-card border-gold shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Detalles del Solicitante</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            {% with detalle_natural=solicitud.detallesolicitudnatural detalle_juridica=solicitud.detallesolicitudjuridica %}
+                                {% if detalle_natural %}
+                                    <div class="detail-item"><strong>Tipo:</strong> <span>Persona Natural</span></div>
+                                    <hr>
+                                    <div class="detail-item"><strong>Nombre:</strong>
+                                        <span>{{ solicitud.solicitante.get_full_name|default:solicitud.solicitante.username }}</span>
+                                    </div>
+                                    <div class="detail-item"><strong>Email:</strong>
+                                        <span>{{ solicitud.solicitante.email }}</span></div>
+                                    <div class="detail-item"><strong>Cédula:</strong>
+                                        <span>{{ detalle_natural.cedula }}</span></div>
+                                    <div class="detail-item"><strong>Celular:</strong>
+                                        <span>{{ detalle_natural.celular }}</span></div>
+                                    <div class="detail-item"><strong>Dirección:</strong>
+                                        <span>{{ detalle_natural.direccion }}</span></div>
+
+                                {% elif detalle_juridica %}
+                                    <div class="detail-item"><strong>Tipo:</strong> <span>Persona Jurídica</span></div>
+                                    <hr>
+                                    <div class="detail-item"><strong>Razón Social:</strong>
+                                        <span>{{ detalle_juridica.razon_social }}</span></div>
+                                    <div class="detail-item"><strong>RUC:</strong>
+                                        <span>{{ detalle_juridica.ruc }}</span></div>
+                                    <div class="detail-item"><strong>Nombre Comercial:</strong>
+                                        <span>{{ detalle_juridica.nombre_comercial }}</span></div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+
+                    {% if solicitud.documentos.all %}
+                        <div class="card dashboard-card border-gold shadow-sm">
+                            <div class="card-header">
+                                <h5 class="mb-0">Documentos Adjuntos</h5>
+                            </div>
+                            <div class="list-group list-group-flush">
+                                {% for documento in solicitud.documentos.all %}
+                                    <a href="{{ documento.archivo.url }}" target="_blank"
+                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-file-earmark-text me-2"></i>
+                                            {{ documento.nombre_documento }}
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">Ver Documento</span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card dashboard-card border-gold shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Acciones</h5>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <p class="mb-2"><strong>Estado Actual:</strong></p>
+                            <p class="mb-3">
+                            <span class="badge fs-6
+                                {% if solicitud.estado == 'APROBADA' %}bg-success
+                                {% elif solicitud.estado == 'PENDIENTE' or solicitud.estado == 'EN_REVISION' %}bg-warning text-dark
+                                {% elif solicitud.estado == 'RECHAZADA' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ solicitud.get_estado_display }}
+                            </span>
+                            </p>
+
+                            {% if solicitud.estado == 'PENDIENTE' or solicitud.estado == 'EN_REVISION' %}
+                                <p class="text-muted small mb-3">Revisa la información y aprueba o rechaza la
+                                    solicitud.</p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" name="action" value="aprobar"
+                                                class="btn btn-success btn-lg">Aprobar Solicitud
+                                        </button>
+                                        <button type="submit" name="action" value="rechazar"
+                                                class="btn btn-danger btn-lg">Rechazar Solicitud
+                                        </button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <p class="text-muted mt-3">Esta solicitud ya ha sido procesada.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}" class="btn btn-outline-secondary">‹ Volver a
+                    la lista</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock title %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'staff_panel/css/dashboard.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+    <div class="dashboard-background-gold">
+        <div class="container py-4">
+            <h1 class="display-6 border-bottom pb-3 mb-4 text-dark text-center fw-bold">{{ page_title }}</h1>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card dashboard-card border-gold shadow">
+                        <div class="card-header bg-white border-bottom border-gold">
+                            <h5 class="mb-0 text-dark">Solicitudes de Afiliación</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h1 class="display-2 fw-bold text-gold">{{ pendientes_afiliacion }}</h1>
+                            <p class="card-text text-muted">Solicitudes pendientes de revisión.</p>
+                            <a href="{% url 'staff_panel:solicitud-afiliacion-list' %}?estado=PENDIENTE"
+                               class="btn btn-outline-gold">Gestionar Solicitudes</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card dashboard-card border-gold shadow">
+                        <div class="card-header bg-white border-bottom border-gold">
+                            <h5 class="mb-0 text-dark">Solicitudes de Servicios</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h1 class="display-2 fw-bold text-gold">{{ pendientes_servicios }}</h1>
+                            <p class="card-text text-muted">Solicitudes de servicios y reservas por aprobar.</p>
+                            <a href="{% url 'staff_panel:solicitud-servicio-list' %}"
+                               class="btn btn-outline-gold">Gestionar Solicitudes</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card dashboard-card border-gold shadow">
+                        <div class="card-header bg-white border-bottom border-gold">
+                            <h5 class="mb-0 text-dark">Contenido y Noticias</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h1 class="display-2 fw-bold text-gold"><i class="bi bi-pencil-square"></i></h1>
+                            <p class="card-text text-muted">Crear, editar y publicar artículos en el sitio.</p>
+                            <a href="{% url 'staff_panel:noticia-list' %}" class="btn btn-outline-gold">Gestionar
+                                Noticias</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card dashboard-card border-gold shadow">
+                        <div class="card-header bg-white border-bottom border-gold">
+                            <h5 class="mb-0 text-dark">Catálogo de Servicios</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h1 class="display-2 fw-bold text-gold"><i class="bi bi-card-list"></i></h1>
+                            <p class="card-text text-muted">Crear y editar los servicios y recursos que ofrece la
+                                organización.</p>
+                            <a href="{% url 'staff_panel:servicio-list-staff' %}"
+                               class="btn btn-outline-gold">Gestionar Catálogo</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card dashboard-card border-success shadow">
+                        <div class="card-header bg-white border-bottom border-success">
+                            <h5 class="mb-0 text-dark">Pagos por Verificar</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h1 class="display-2 fw-bold text-success">{{ pendientes_pagos }}</h1>
+                            <p class="card-text text-muted">Comprobantes de pago subidos por socios.</p>
+                            <a href="{% url 'staff_panel:pago-list' %}" class="btn btn-outline-success">Verificar
+                                Pagos</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'staff_panel/js/dashboard.js' %}"></script>
+{% endblock extra_js %}
